@@ -1,0 +1,19 @@
+Editar
+~/.bashrc
+
+Si és des de casa
+~/.profile
+
+afegint
+
+PATH=~WEBprofe/usr/bin:$PATH
+
+Per connectar-se a la màquina remota
+ssh -p 6767 ldatusr14@soft00.upc.edu 
+
+Pujar el fitxer en local al servidor per compilar
+scp -P 6767 exercici1.hs ldatusr14@soft00.upc.edu:~/LAB/Practica2 
+→ Passsword: obujl0qi
+
+Per compilar el fitxer de Haskell
+~WEBprofe/usr/bin/executaMain fitxer.hs > sortida.svg
