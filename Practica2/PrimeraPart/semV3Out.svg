@@ -1,0 +1,123 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 1.1//EN" "http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd">
+<svg width='600' height='600' viewBox='-300 -300 600 600'
+ xmlns='http://www.w3.org/2000/svg' xmlns:xlink='http://www.w3.org/1999/xlink'>
+  <rect vector-effect='non-scaling-stroke' fill='none' stroke='gray' stroke-width='2' x='-300' y='-300' width='600' height='600'/>
+  <g transform='matrix(1.0, -0.0, -0.0, 1.0, 60.0, -180.0)'>
+    <rect fill='gray' x='-25.0' y='-80.0' width='50.0' height='160.0'/>
+    <rect fill='none' vector-effect='non-scaling-stroke' stroke='black' stroke-width='1' x='-27.0' y='-82.0' width='54.0' height='164.0'/>
+    <g transform='matrix(1.0, -0.0, -0.0, 1.0, 0.0, 55.0)'>
+      <ellipse fill='green' cx='0' cy='0' rx='20.0' ry='20.0'/>
+    </g>
+    <g transform='matrix(1.0, -0.0, -0.0, 1.0, 0.0, -0.0)'>
+      <ellipse fill='yellow' cx='0' cy='0' rx='20.0' ry='20.0'/>
+    </g>
+    <g transform='matrix(1.0, -0.0, -0.0, 1.0, 0.0, -55.0)'>
+      <ellipse fill='red' cx='0' cy='0' rx='20.0' ry='20.0'/>
+    </g>
+  </g>
+  <g transform='matrix(1.0, -0.0, -0.0, 1.0, 120.0, -180.0)'>
+    <rect fill='gray' x='-25.0' y='-80.0' width='50.0' height='160.0'/>
+    <rect fill='none' vector-effect='non-scaling-stroke' stroke='black' stroke-width='1' x='-27.0' y='-82.0' width='54.0' height='164.0'/>
+    <g transform='matrix(1.0, -0.0, -0.0, 1.0, 0.0, 55.0)'>
+      <ellipse fill='green' cx='0' cy='0' rx='20.0' ry='20.0'/>
+    </g>
+    <g transform='matrix(1.0, -0.0, -0.0, 1.0, 0.0, -0.0)'>
+      <ellipse fill='yellow' cx='0' cy='0' rx='20.0' ry='20.0'/>
+    </g>
+    <g transform='matrix(1.0, -0.0, -0.0, 1.0, 0.0, -55.0)'>
+      <ellipse fill='red' cx='0' cy='0' rx='20.0' ry='20.0'/>
+    </g>
+  </g>
+  <g transform='matrix(1.0, -0.0, -0.0, 1.0, 180.0, -180.0)'>
+    <rect fill='gray' x='-25.0' y='-80.0' width='50.0' height='160.0'/>
+    <rect fill='none' vector-effect='non-scaling-stroke' stroke='black' stroke-width='1' x='-27.0' y='-82.0' width='54.0' height='164.0'/>
+    <g transform='matrix(1.0, -0.0, -0.0, 1.0, 0.0, 55.0)'>
+      <ellipse fill='green' cx='0' cy='0' rx='20.0' ry='20.0'/>
+    </g>
+    <g transform='matrix(1.0, -0.0, -0.0, 1.0, 0.0, -0.0)'>
+      <ellipse fill='yellow' cx='0' cy='0' rx='20.0' ry='20.0'/>
+    </g>
+    <g transform='matrix(1.0, -0.0, -0.0, 1.0, 0.0, -55.0)'>
+      <ellipse fill='red' cx='0' cy='0' rx='20.0' ry='20.0'/>
+    </g>
+  </g>
+  <g transform='matrix(1.0, -0.0, -0.0, 1.0, 60.0, -0.0)'>
+    <rect fill='gray' x='-25.0' y='-80.0' width='50.0' height='160.0'/>
+    <rect fill='none' vector-effect='non-scaling-stroke' stroke='black' stroke-width='1' x='-27.0' y='-82.0' width='54.0' height='164.0'/>
+    <g transform='matrix(1.0, -0.0, -0.0, 1.0, 0.0, 55.0)'>
+      <ellipse fill='green' cx='0' cy='0' rx='20.0' ry='20.0'/>
+    </g>
+    <g transform='matrix(1.0, -0.0, -0.0, 1.0, 0.0, -0.0)'>
+      <ellipse fill='yellow' cx='0' cy='0' rx='20.0' ry='20.0'/>
+    </g>
+    <g transform='matrix(1.0, -0.0, -0.0, 1.0, 0.0, -55.0)'>
+      <ellipse fill='red' cx='0' cy='0' rx='20.0' ry='20.0'/>
+    </g>
+  </g>
+  <g transform='matrix(1.0, -0.0, -0.0, 1.0, 120.0, -0.0)'>
+    <rect fill='gray' x='-25.0' y='-80.0' width='50.0' height='160.0'/>
+    <rect fill='none' vector-effect='non-scaling-stroke' stroke='black' stroke-width='1' x='-27.0' y='-82.0' width='54.0' height='164.0'/>
+    <g transform='matrix(1.0, -0.0, -0.0, 1.0, 0.0, 55.0)'>
+      <ellipse fill='green' cx='0' cy='0' rx='20.0' ry='20.0'/>
+    </g>
+    <g transform='matrix(1.0, -0.0, -0.0, 1.0, 0.0, -0.0)'>
+      <ellipse fill='yellow' cx='0' cy='0' rx='20.0' ry='20.0'/>
+    </g>
+    <g transform='matrix(1.0, -0.0, -0.0, 1.0, 0.0, -55.0)'>
+      <ellipse fill='red' cx='0' cy='0' rx='20.0' ry='20.0'/>
+    </g>
+  </g>
+  <g transform='matrix(1.0, -0.0, -0.0, 1.0, 180.0, -0.0)'>
+    <rect fill='gray' x='-25.0' y='-80.0' width='50.0' height='160.0'/>
+    <rect fill='none' vector-effect='non-scaling-stroke' stroke='black' stroke-width='1' x='-27.0' y='-82.0' width='54.0' height='164.0'/>
+    <g transform='matrix(1.0, -0.0, -0.0, 1.0, 0.0, 55.0)'>
+      <ellipse fill='green' cx='0' cy='0' rx='20.0' ry='20.0'/>
+    </g>
+    <g transform='matrix(1.0, -0.0, -0.0, 1.0, 0.0, -0.0)'>
+      <ellipse fill='yellow' cx='0' cy='0' rx='20.0' ry='20.0'/>
+    </g>
+    <g transform='matrix(1.0, -0.0, -0.0, 1.0, 0.0, -55.0)'>
+      <ellipse fill='red' cx='0' cy='0' rx='20.0' ry='20.0'/>
+    </g>
+  </g>
+  <g transform='matrix(1.0, -0.0, -0.0, 1.0, 60.0, 180.0)'>
+    <rect fill='gray' x='-25.0' y='-80.0' width='50.0' height='160.0'/>
+    <rect fill='none' vector-effect='non-scaling-stroke' stroke='black' stroke-width='1' x='-27.0' y='-82.0' width='54.0' height='164.0'/>
+    <g transform='matrix(1.0, -0.0, -0.0, 1.0, 0.0, 55.0)'>
+      <ellipse fill='green' cx='0' cy='0' rx='20.0' ry='20.0'/>
+    </g>
+    <g transform='matrix(1.0, -0.0, -0.0, 1.0, 0.0, -0.0)'>
+      <ellipse fill='yellow' cx='0' cy='0' rx='20.0' ry='20.0'/>
+    </g>
+    <g transform='matrix(1.0, -0.0, -0.0, 1.0, 0.0, -55.0)'>
+      <ellipse fill='red' cx='0' cy='0' rx='20.0' ry='20.0'/>
+    </g>
+  </g>
+  <g transform='matrix(1.0, -0.0, -0.0, 1.0, 120.0, 180.0)'>
+    <rect fill='gray' x='-25.0' y='-80.0' width='50.0' height='160.0'/>
+    <rect fill='none' vector-effect='non-scaling-stroke' stroke='black' stroke-width='1' x='-27.0' y='-82.0' width='54.0' height='164.0'/>
+    <g transform='matrix(1.0, -0.0, -0.0, 1.0, 0.0, 55.0)'>
+      <ellipse fill='green' cx='0' cy='0' rx='20.0' ry='20.0'/>
+    </g>
+    <g transform='matrix(1.0, -0.0, -0.0, 1.0, 0.0, -0.0)'>
+      <ellipse fill='yellow' cx='0' cy='0' rx='20.0' ry='20.0'/>
+    </g>
+    <g transform='matrix(1.0, -0.0, -0.0, 1.0, 0.0, -55.0)'>
+      <ellipse fill='red' cx='0' cy='0' rx='20.0' ry='20.0'/>
+    </g>
+  </g>
+  <g transform='matrix(1.0, -0.0, -0.0, 1.0, 180.0, 180.0)'>
+    <rect fill='gray' x='-25.0' y='-80.0' width='50.0' height='160.0'/>
+    <rect fill='none' vector-effect='non-scaling-stroke' stroke='black' stroke-width='1' x='-27.0' y='-82.0' width='54.0' height='164.0'/>
+    <g transform='matrix(1.0, -0.0, -0.0, 1.0, 0.0, 55.0)'>
+      <ellipse fill='green' cx='0' cy='0' rx='20.0' ry='20.0'/>
+    </g>
+    <g transform='matrix(1.0, -0.0, -0.0, 1.0, 0.0, -0.0)'>
+      <ellipse fill='yellow' cx='0' cy='0' rx='20.0' ry='20.0'/>
+    </g>
+    <g transform='matrix(1.0, -0.0, -0.0, 1.0, 0.0, -55.0)'>
+      <ellipse fill='red' cx='0' cy='0' rx='20.0' ry='20.0'/>
+    </g>
+  </g>
+</svg>
