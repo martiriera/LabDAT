@@ -33,9 +33,9 @@ runHandler :: Handler a -> Request -> HandlerState -> IO (a, HandlerState)
 runHandler (HandlerC h) = h
 
 -- L'estat del Handler compren:
---      'Cache' dels parametres de la peticio
---      L'estat de la sessio que s'obte de la corresponent 'cookie'.
---        Aquest estat de la sessio es una llista de parelles nom-valor.
+--      'Cache' dels parametres de la peticio.
+--      L'estat de la sessio que s'obte de les corresponents 'cookies'.
+--        Aquest estat de sessio es una llista de parelles nom-valor.
 data HandlerState = HandlerStateC (Maybe Query) [(Text, Text)]
 
 -- Funcions auxiliars per obtenir informació de l'estat del handler
@@ -111,20 +111,36 @@ getMethod =
     error "Handler.getMethod: A completar per l'estudiant"
 
 -- Obte el valor de l'atribut de sessio indicat amb el nom.
--- Retorna Nothing si l'atribut indicat no existeix o no te la sintaxis adequada.
+-- Retorna Nothing si l'atribut indicat no existeix.
 getSession :: Read a => Text -> Handler (Maybe a)
 getSession name =
+    -- NOTA: Useu la funcio 'getSession_' i 'readt' (que parseja un text).
     error "Handler.getSession: A completar per l'estudiant"
 
--- Fixa l'atribut de sessio indicat amb el nom al valor indicat.
+-- Obte el valor de l'atribut de sessio indicat amb el nom.
+-- Retorna Nothing si l'atribut indicat no existeix o no te la sintaxis adequada.
+getSession_ :: Text -> Handler (Maybe Text)
+getSession_ name =
+    error "Handler.getSession: A completar per l'estudiant"
+
+-- Fixa l'atribut de sessio indicat amb el nom i valor indicats.
 setSession :: Show a => Text -> a -> Handler ()
-setSession name value = HandlerC $ \ req st -> do
-    let newsession = (name, showt value) : filter ((name /=) . fst) (hsSession st)
+setSession name value =
+    -- NOTA: Useu les funcions 'setSession_' i 'showt' (que converteix a text).
+    error "Handler.setSession: A completar per l'estudiant"
+
+-- Fixa l'atribut de sessio indicat amb el nom i valor indicats.
+setSession_ :: Text -> Text -> Handler ()
+setSession_ name value = HandlerC $ \ req st -> do
+    let newsession = (name, value) : filter ((name /=) . fst) (hsSession st)
     error "Handler.setSession: A completar per l'estudiant"
 
 -- Obte els parametres del contingut de la peticio.
 getPostQuery :: Handler Query
 getPostQuery = HandlerC $ \ req st -> do
+    -- Si previament ja s'havien obtingut els parametres (i guardats en l'estat del handler)
+    -- aleshores es retornen aquests, evitant tornar a llegir el contingut de la peticio
+    -- (veieu el comentari de 'requestGetPostQuery' en el modul 'WaiUtils').
     case hsQuery st of
         Just query ->
             pure ( query, st )

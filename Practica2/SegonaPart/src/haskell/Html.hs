@@ -41,6 +41,7 @@ instance Monoid (HtmlM ()) where
 runHtml :: Html -> [Text]
 runHtml = snd . runHtmlM
 
+-- Funcio principal que converteix 'Html' a 'Text'.
 runHtmlToText :: Html -> Text
 runHtmlToText = T.concat . concatMap addLF . snd . runHtmlM
     where

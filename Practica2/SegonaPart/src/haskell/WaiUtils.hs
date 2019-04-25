@@ -23,6 +23,12 @@ import           Control.Applicative
 -- ****************************************************************
 -- Utilities
 
+-- Obte els parametres de la peticio a partir del contingut de la peticio.
+-- Aquesta accio sols es pot executar una sola vegada sobre la peticio,
+-- ja que llegeix i consumeix el seu contingut.
+-- El resultat es una representacio del corresponent conjunt de parelles (nom, valors);
+-- per obtenir el(s) valor(s) corresponent(s) a un determinat nom caldra usar la
+-- funcio 'lookupParam(s)'.
 requestGetPostQuery :: Request -> IO Query
 requestGetPostQuery req =
     parseQuery <$> getBody req
@@ -45,22 +51,7 @@ lookupParams name query =
     let nameBS = T.encodeUtf8 name
     in T.decodeUtf8 <$> catMaybes (snd <$> filter ((==) nameBS . fst) query)
 
-mimeHtml :: B.ByteString
-mimeHtml = "text/html;charset=UTF-8"
-
-htmlResponse :: Text -> [(Text, Text)] -> Response
-htmlResponse html session =
-    let headers = [ ("Content-Type", mimeHtml)
-                  , ("Set-Cookie", mkSetCookieValue session) ]
-    in responseBuilder ok200 headers (T.encodeUtf8Builder html)
-
-redirectResponse :: Text -> [(Text, Text)] -> Response
-redirectResponse url session =
-    let headers = [ ("Location", T.encodeUtf8 url)
-                  , ("Content-Type", "text/plain;charset=UTF-8")
-                  , ("Set-Cookie", mkSetCookieValue session) ]
-    in responseBuilder seeOther303 headers (T.encodeUtf8Builder "Redirect")
-
+-- Obte l'estat de sessio a partir de la corresponent 'cookie' de la peticio.
 requestSession :: Request -> [(Text, Text)]
 requestSession req =
     let mbvalue = do
@@ -69,6 +60,26 @@ requestSession req =
             readMaybe $ T.unpack $ T.decodeUtf8 session
     in maybe [] id mbvalue
 
+
+mimeHtml :: B.ByteString
+mimeHtml = "text/html;charset=UTF-8"
+
+-- Obte una resposta normal a partir del contingut (que es suposa text HTML) i de l'estat de sessio.
+htmlResponse :: Text -> [(Text, Text)] -> Response
+htmlResponse html session =
+    let headers = [ ("Content-Type", mimeHtml)
+                  , ("Set-Cookie", mkSetCookieValue session) ]
+    in responseBuilder ok200 headers (T.encodeUtf8Builder html)
+
+-- Obte una resposta de redireccio a partir de la URL de desti i de l'estat de sessio.
+redirectResponse :: Text -> [(Text, Text)] -> Response
+redirectResponse url session =
+    let headers = [ ("Location", T.encodeUtf8 url)
+                  , ("Content-Type", "text/plain;charset=UTF-8")
+                  , ("Set-Cookie", mkSetCookieValue session) ]
+    in responseBuilder seeOther303 headers (T.encodeUtf8Builder "Redirect")
+
+-- Funcio auxiliar que obte el valor de la 'cookie' resultant a partir de l'estat de sessio.
 mkSetCookieValue :: [(Text, Text)] -> B.ByteString
 mkSetCookieValue session =
     let setCookie = defaultSetCookie { setCookieName = T.encodeUtf8 "session"
@@ -76,10 +87,9 @@ mkSetCookieValue session =
                                      }
     in BL.toStrict $ toLazyByteString $ renderSetCookie setCookie
 
+-- Obte una resposta a partir del codi d'estat i un missatge d'error.
 errorResponse :: Status -> Text -> Response
 errorResponse status msg =
-    let headers = [ ("Content-Type", mimeHtml) ]
-        html = "<!DOCTYPE html><html><head><title>Exemple CGI Lib: Tasques</title></head><body>\n"
-                <> "<center><h2>ERROR</h2><h3><font color=\"red\">" <> msg <> "</font></h3></center>\n"
-                <> "</body></html>\n"
-    in responseBuilder status headers (T.encodeUtf8Builder html)
+    let headers = [ ("Content-Type", "text/plain;charset=UTF-8") ]
+    in responseBuilder status headers (T.encodeUtf8Builder msg)
+

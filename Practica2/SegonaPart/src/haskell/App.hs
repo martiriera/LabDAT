@@ -46,7 +46,19 @@ doGet = do
 -- Executed when the HTTP method is POST
 doPost :: Handler HandlerResponse
 doPost = do
-    error "App.doPost: A completar per l'estudiant"
+    calc <- maybe calcInit id <$> getSession "calcState"
+    q <- getPostQuery
+    let (mbev, hpanel) = runForms (Just q)
+    case mbev of
+        Just ev ->
+            case calcSolve1 ev calc of
+                Right calc2 -> do
+                    setSession "calcState" calc2
+                    pure $ HRRedirect "#"
+                Left err ->
+                    pure $ HRHtml $ pageHtml hpanel calc (Just err)
+        Nothing ->
+            pure $ HRHtml $ pageHtml hpanel calc Nothing
 
 -- ****************************************************************
 -- Tractament dels formularis corresponents a les diferents operacions (events)

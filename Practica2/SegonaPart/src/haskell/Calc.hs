@@ -1,6 +1,5 @@
 
--- Canvis:
---   Tractament d'errors.
+--   Tractament d'errors (amb el monad 'Either String').
 
 {-# LANGUAGE OverloadedStrings #-}
 
