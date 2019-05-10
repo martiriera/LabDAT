@@ -1,0 +1,37 @@
+<h1>Tasques</h1>
+<form method="POST" action="@{HomeR}">
+  <table class="table table-striped table-condensed">
+  <thead><tr><th>&nbsp;</th><th>Estat</th><th>Títol</th></tr></thead><tbody>
+    $forall{ p <- tasks }
+      <tr><td><input type="checkbox" name="tid" value="#{fst p}"></td>
+      <td>$if{taskDone (snd p)}"FET"$else"PENDENT"$end</td><td>#{taskTitle (snd p)}</td></tr>
+    $end
+  </tbody>
+  </table>
+  <div class="row">
+    <div class="col-sm-offset-2 col-sm-2">
+      <button type="submit" class="btn btn-primary" name="mark">Marca FET</button>
+    </div>
+    <div class="col-sm-2">
+      <button type="submit" class="btn btn-primary" name="delete">Elimina</button>
+    </div>
+  </div>
+</form>
+
+$maybe{ unused <- mbuser }
+<hr>
+<h1>Nova tasca</h1>
+<form class="form-horizontal" role="form" method="POST" action="@{HomeR}">
+<div class="row">
+  <div class="col-sm-offset-2 col-sm-9">
+    ^{tformw}
+  </div>
+</div>
+<div class="row">
+  <div class="col-sm-offset-2 col-sm-8">
+    <button type="submit" class="btn btn-primary" name="add">Afegeix</button>
+  </div>
+</div>
+</form>
+$end
+

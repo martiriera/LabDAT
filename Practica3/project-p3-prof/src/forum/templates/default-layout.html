@@ -1,0 +1,21 @@
+<!DOCTYPE html>
+<html><head>
+  <link rel="stylesheet" type="text/css" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.4/css/bootstrap.min.css">
+  <title>Forum: #{pcTitle page}</title>
+  ^{pcHead page}
+</head><body>
+<div class="container-fluid">
+  <div class="row"><div class="col-sm-offset-8 col-sm-4">
+    $maybe{ user <- mbuser }
+        <span class="glyphicon glyphicon-user"></span> Usuari: <b>#{user}</b> &nbsp;&nbsp;
+        <span class="glyphicon glyphicon-log-out"></span> <a href="@{AuthR LogoutR}">Tanca sessió</a>
+    $nothing
+        <span class="glyphicon glyphicon-log-in"></span> <a href="@{AuthR LoginR}">Login</a>
+    $end
+  </div></div>
+  $maybe{ msg <- mbmsg }<div class="message error">#{msg}</div>$end
+  <hr>
+  ^{pcBody page}
+</div>
+</body></html>
+

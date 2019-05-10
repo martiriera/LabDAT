@@ -1,0 +1,23 @@
+<!DOCTYPE html>
+<html><head>
+  <link rel="stylesheet" type="text/css" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.4/css/bootstrap.min.css">
+  <title>Tasques: #{pcTitle page}</title>
+  ^{pcHead page}
+</head><body>
+<div class="container-fluid">
+  <div class="col-sm-offset-8 col-sm-4">
+    $maybe{ user <- mbuser }
+        <form method="post" action="@{AuthR LogoutR}">
+          <span class="glyphicon glyphicon-user"></span>Usuari: <b>#{user}</b>&nbsp;&nbsp;
+          <span class="glyphicon glyphicon-log-out"></span><button type="submit" class="btn btn-link" name="quit">Tanca sessió</button>
+        </form>
+    $nothing
+        <p><a href="@{AuthR LoginR}">Login</a></p>
+    $end
+  </div>
+  $maybe{ msg <- mbmsg }<p class="message error">#{msg}</p>$end
+  <hr>
+  ^{pcBody page}
+</div>
+</body></html>
+
