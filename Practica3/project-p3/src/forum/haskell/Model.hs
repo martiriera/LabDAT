@@ -37,6 +37,12 @@ data Question = Question
         }
         deriving (Show)
 
+--getCurrentTime :: IO UTCTime
+
+--per convertir IO a Handler usem
+--  liftIO :: MonadIO m => IO a -> m a (donada accio IO que retorna a obté una acció monad m que també retorna a, sempre que estigui a liftIO)
+
+
 type AnswerId = Int64
 
 data Answer = Answer
@@ -175,4 +181,3 @@ updateAnswer aid theme conn =
 deleteAnswer :: AnswerId -> ForumDb -> IO ()
 deleteAnswer aid conn =
     execute conn "DELETE FROM answers WHERE id = ?" (Only aid)
-

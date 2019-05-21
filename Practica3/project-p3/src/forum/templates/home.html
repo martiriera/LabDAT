@@ -1,21 +1,37 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8">
+    <title>Le fórum du DAT</title>
+  </head>
+  <body>
+    <h1><b>El fòrum de DAT</b></h1>
 
-<h1>Plantilla src/templates/home.html (A completar per l'estudiant)</h2>
+    <h2 style="color: #2e6c80;">Llistat de temes</h2>
+    $forall{ p <- themes }
+      <ul>
+        <li>
+          <p><b style="color: #2e6c80; font-size: medium;">#{tTitle (snd p)} </b><b>Responsable:</b> #{tLeader (snd p)} <b>Categoria:</b> #{tCategory (snd p)} <span class="glyphicon glyphicon-arrow-right"></span>
+            <span style="background-color: #ccc; color: #2e6c80; display: inline-block; padding: 3px 10px; font-weight: bold; border-radius: 5px;"><a href="@{ThemeR (fst p)}">Veure tema </a>
+            <span class="glyphicon glyphicon-eye-open"></span></span>
+          </p>
+        </li>
+      </ul>
+    $end
 
-<h3>Esbós de com mostrar la llista de temes (veieu com es defineix la variable <code>themes</code> en el corresponent handler)</h3>
-$forall{ p <- themes }
-  <p>Responsable: #{tLeader (snd p)}, Categoria: #{tCategory (snd p)}, Títol: #{tTitle (snd p)}
-     (<a href="@{ThemeR (fst p)}">enllaç a la ruta del tema</a>)</p>
-$end
-
-$if{ maybe True isAdmin mbuser }
-<h3>Esbós de com mostrar el formulari per crear un tema nou (veieu com es defineix la variable <code>tformw</code> en el corresponent handler)</h3>
-  <div class="row">
-  <div class="col-sm-offset-2 col-sm-10">
-    <form role="form" method="POST" action="@{HomeR}">
-      ^{tformw}
-      <button type="submit" class="btn btn-success">Afegeix tema</button>
-    </form>
-  </div>
-  </div>
-$end
-
+    $if{ maybe False isAdmin mbuser }
+    <h3
+      style="color: #2e6c80;">Crear un nou tema
+      <span class="glyphicon glyphicon-pencil"></span></span>
+    </h3>
+      <div class="row">
+      <div class="col-sm-10">
+        <form role="form" method="POST" action="@{HomeR}">
+          ^{tformw}
+          <button type="submit" class="btn btn-success">Afegeix tema</button>
+        </form>
+      </div>
+      </div>
+    $end
+  </body>
+</html>

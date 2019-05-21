@@ -1,0 +1,26 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8">
+    <title>#{tTitle theme}</title>
+  </head>
+  <body>
+    <h1><strong>#{tTitle theme}</strong></h1>
+    <h2>Responsable: <strong>#{tLeader theme}</strong> Categoria: <strong>#{tCategory theme}</strong></h2>
+    <pre><font size=4> #{tDescription theme}<font></pre>
+    <span class="glyphicon glyphicon-arrow-left"></span> <a href="@{HomeR}">Tornar enrere</a>
+
+    <h3>Llistat de preguntes</h3>
+    $forall{ p <- questions }
+      <ul>
+        <li>
+          <p><b style="color: #2e6c80; font-size: medium;">Qüestió #{qTitle (snd p)} </b><b>preguntada per </b> #{qUser (snd p)} <b>a </b> #{show (qPosted (snd p))} <span class="glyphicon glyphicon-arrow-right"></span>
+            <span style="background-color: #ccc; color: #2e6c80; display: inline-block; padding: 3px 10px; font-weight: bold; border-radius: 5px;"><a href="@{QuestionR tid (fst p)}">Veure pregunta </a>
+            <span class="glyphicon glyphicon-question-sign"></span></span>
+          </p>
+        </li>
+      </ul>
+    $end
+
+  </body>
+</html>

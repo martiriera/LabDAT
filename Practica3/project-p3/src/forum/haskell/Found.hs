@@ -66,5 +66,3 @@ instance WebAuth Forum where
 
 isAdmin :: UserId -> Bool
 isAdmin u = u == "admin"
-
-
