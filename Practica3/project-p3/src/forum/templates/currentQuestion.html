@@ -1,20 +1,47 @@
 <!DOCTYPE html>
 <html>
-  <head>
-    <meta charset="utf-8">
-    <title>#{qTitle question}</title>
-  </head>
-  <body>
-    <h2>Pregunta de <b>#{qUser question}</b> al tema <a href="@{ThemeR tid}">#{tTitle theme}</a></h2>
-    <h3><b>#{qTitle question}</b><i> el dia <b>#{show (qPosted question)}</b></i></h3>
-    <p>#{qText question}</p>
-    <span class="glyphicon glyphicon-arrow-left"></span> <a href="@{HomeR}">Tornar al tema</a>
-    <br>
-    <span class="glyphicon glyphicon-home"></span> <a href="@{ThemeR tid}">Tornar al fórum</a>
+
+<head>
+  <meta charset="utf-8">
+  <title>#{qTitle question}</title>
+</head>
+
+<body>
+  <h2>Pregunta de <b>#{qUser question}</b> al tema <a href="@{ThemeR tid}">#{tTitle theme}</a></h2>
+  <h3><b>#{qTitle question}</b><i> el dia <b>#{show (qPosted question)}</b></i></h3>
+  <pre>#{qText question}</pre>
+  <span class="glyphicon glyphicon-arrow-left"></span> <a href="@{ThemeR tid}">Tornar al tema</a>
+  <br>
+  <span class="glyphicon glyphicon-home"></span> <a href="@{HomeR}">Tornar al fòrum</a>
+
+  <h3>Llistat de respostes</h3>
+  $forall{ p <- answers } <ul>
+    <li>
+      <p>Resposta de <b>#{aUser (snd p)}</b> a <b>#{show (aPosted (snd p))}:</b>
+        <pre style="text-indent: 40px">#{aText (snd p)}</pre>
+        <br>
+      </p>
+    </li>
+    </ul>
+    $end
+
+    $maybe{ user <- mbuser } <h3 style="color: #2e6c80;">Crear un nova resposta
+      <span class="glyphicon glyphicon-plus"></span>
+      </h3>
+      <div class="row">
+        <div class="col-sm-10">
+          <form role="form" method="POST" action="@{QuestionR tid qid}">
+            ^{aformw}
+            <button type="submit" class="btn btn-success">Afegeix resposta</button>
+          </form>
+        </div>
+      </div>
+      $end
 
 
 
 
 
-  </body>
+</body>
+
 </html>

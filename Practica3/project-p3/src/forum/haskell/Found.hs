@@ -27,12 +27,13 @@ data Forum = Forum { forumDb :: ForumDb
 
 
 data instance Route Forum =
-          HomeR | ThemeR ThemeId | QuestionR ThemeId QuestionId
+          HomeR | ThemeR ThemeId | ThemeEditR ThemeId | QuestionR ThemeId QuestionId
         | AuthR (Route Auth)
 
 instance RenderRoute Forum where
     renderRoute HomeR   = ([], [])
     renderRoute (ThemeR tid) = (["themes",toPathPiece tid], [])
+    renderRoute (ThemeEditR tid) = (["themes",toPathPiece tid,"update"], [])
     renderRoute (QuestionR tid qid) = (["themes",toPathPiece tid,"qs",toPathPiece qid], [])
     renderRoute (AuthR authr) = let (path,qs) = renderRoute authr in ("auth":path, qs)
 
@@ -65,4 +66,7 @@ instance WebAuth Forum where
             Just upass -> pure $ upass == password
 
 isAdmin :: UserId -> Bool
-isAdmin u = u == "admin"
+isAdmin u = (u == "admin")
+
+isLeader :: Theme -> UserId -> Bool
+isLeader t u = (u == tLeader t)

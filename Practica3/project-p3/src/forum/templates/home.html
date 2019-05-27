@@ -1,37 +1,39 @@
 <!DOCTYPE html>
 <html>
-  <head>
-    <meta charset="utf-8">
-    <title>Le fórum du DAT</title>
-  </head>
-  <body>
-    <h1><b>El fòrum de DAT</b></h1>
 
-    <h2 style="color: #2e6c80;">Llistat de temes</h2>
-    $forall{ p <- themes }
-      <ul>
-        <li>
-          <p><b style="color: #2e6c80; font-size: medium;">#{tTitle (snd p)} </b><b>Responsable:</b> #{tLeader (snd p)} <b>Categoria:</b> #{tCategory (snd p)} <span class="glyphicon glyphicon-arrow-right"></span>
-            <span style="background-color: #ccc; color: #2e6c80; display: inline-block; padding: 3px 10px; font-weight: bold; border-radius: 5px;"><a href="@{ThemeR (fst p)}">Veure tema </a>
-            <span class="glyphicon glyphicon-eye-open"></span></span>
-          </p>
-        </li>
-      </ul>
+<head>
+  <meta charset="utf-8">
+  <title>Le fórum du DAT</title>
+</head>
+
+<body>
+  <h1><b>El fòrum de DAT</b></h1>
+
+  <h2 style="color: #2e6c80;">Llistat de temes</h2>
+  $forall{ p <- themes } <ul>
+    <li>
+      <p><b style="color: #2e6c80; font-size: medium;">#{tTitle (snd p)} </b><b>Responsable:</b> #{tLeader (snd p)} <b>Categoria:</b> #{tCategory (snd p)} <span class="glyphicon glyphicon-arrow-right"></span>
+        <span style="background-color: #ccc; color: #2e6c80; display: inline-block; padding: 3px 10px; font-weight: bold; border-radius: 5px;"><a href="@{ThemeR (fst p)}">Veure tema </a>
+          <span class="glyphicon glyphicon-eye-open"></span></span>
+
+      </p>
+    </li>
+    </ul>
     $end
 
     $if{ maybe False isAdmin mbuser }
-    <h3
-      style="color: #2e6c80;">Crear un nou tema
-      <span class="glyphicon glyphicon-pencil"></span></span>
+    <h3 style="color: #2e6c80;">Crear un nou tema
+      <span class="glyphicon glyphicon-plus"></span>
     </h3>
-      <div class="row">
+    <div class="row">
       <div class="col-sm-10">
         <form role="form" method="POST" action="@{HomeR}">
           ^{tformw}
           <button type="submit" class="btn btn-success">Afegeix tema</button>
         </form>
       </div>
-      </div>
+    </div>
     $end
-  </body>
+</body>
+
 </html>

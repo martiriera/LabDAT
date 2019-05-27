@@ -18,27 +18,28 @@ import Develop.DatFw.Form.Fields
 
 import           Data.Text (Text)
 import           Control.Monad.IO.Class   -- imports liftIO
+import           Control.Monad
 import           Data.Time
 
 {---------------------------------------------------------------------
                 TODO
 ---------------------------------------------------------------------}
 
-themeForm :: AForm (HandlerFor Forum) Theme
-themeForm =
+themeForm :: Maybe Theme -> AForm (HandlerFor Forum) Theme
+themeForm maybeth =
     Theme <$> freq (checkM checkUserExists textField)
                    (withPlaceholder "Introduiu el nom de l'usuari responsable" "Nom del responsable")
-                   Nothing
+                   (tLeader <$> maybeth)
           <*> pure ""
-          <*> freq textField (withPlaceholder "Introduiu el títol del tema" "Titol") Nothing
-          <*> freq textareaField (withPlaceholder "Introduiu la descripció del tema" "Descripció") Nothing
+          <*> freq textField (withPlaceholder "Introduiu el títol del tema" "Titol del tema") (tTitle <$> maybeth)
+          <*> freq textareaField (withPlaceholder "Introduiu la descripció del tema" "Descripció") (tDescription <$> maybeth)
 
 questionForm :: ThemeId -> AForm (HandlerFor Forum) Question
 questionForm tid =
     Question <$> pure tid
            <*> liftToAForm requireAuthId --converteix accio del handler a un AForm --requireAuthId retorna autenticador o aborta
            <*> liftToAForm (liftIO getCurrentTime)
-           <*> freq textField (withPlaceholder "Introduïu el títol de la pregunta" "Títol") Nothing
+           <*> freq textField (withPlaceholder "Introduïu el títol de la pregunta" "Assumpte") Nothing
            <*> freq textareaField (withPlaceholder "Introduïu la descripció de la pregunta" "Descripció") Nothing
              --freq consrueix form amb camp obligatori
 
@@ -47,7 +48,7 @@ answerForm qid =
    Answer <$> pure qid
           <*> liftToAForm requireAuthId --converteix accio del handler a un AForm --requireAuthId retorna autenticador o aborta
           <*> liftToAForm (liftIO getCurrentTime)
-          <*> freq textField (withPlaceholder "Introduïu el la resposta" "Resposta") Nothing
+          <*> freq textField (withPlaceholder "Introduïu la resposta" "Resposta") Nothing
 
 checkUserExists :: Text -> HandlerFor Forum (Either Text Text)
 checkUserExists uname = do
@@ -62,15 +63,20 @@ getHomeR = do
     db <- getsSite forumDb
     themes <- liftIO $ getThemeList db
     mbuser <- maybeAuthId
-    tformw <- generateAFormPost themeForm
+    tformw <- generateAFormPost (themeForm Nothing)
     -- Return HTML content
     defaultLayout $ $(widgetTemplFile "src/forum/templates/home.html")
+
+    -- isUpdate <- isJust <$> lookupPostParam "update"
+    -- if isUpdate then do
+    --
+    -- else
 
 postHomeR :: HandlerFor Forum Html
 postHomeR = do
     user <- requireAuthId
     db <- getsSite forumDb
-    (tformr, tformw) <- runAFormPost themeForm
+    (tformr, tformw) <- runAFormPost (themeForm Nothing)
     case tformr of
       -- http://soft0.upc.edu/dat/datfw/haddock/datfw/Develop-DatFw-Form.html#v:runAFormPost
       -- S'ha de comprovar si el Form és success, missing o failure
@@ -83,19 +89,18 @@ postHomeR = do
             defaultLayout $(widgetTemplFile "src/forum/templates/home.html")
 
 
+
 getThemeR :: ThemeId -> HandlerFor Forum Html
 getThemeR tid = do
     -- fail "A completar per l'estudiant"
     db <- getsSite forumDb
-    mbuser <- maybeAuthId 
+    mbuser <- maybeAuthId
     -- let mbuser = Just user
     -- mbuser <- requireAuthId
-    findtheme <- liftIO $ getTheme tid db
+    Just theme <- liftIO $ getTheme tid db
     questions <- liftIO $ getQuestionList tid db
     qformw <- generateAFormPost (questionForm tid)
-    case findtheme of
-      Nothing -> defaultLayout $(widgetTemplFile "src/forum/templates/themeNotFound.html")
-      Just theme -> defaultLayout $(widgetTemplFile "src/forum/templates/currentTheme.html")
+    defaultLayout $(widgetTemplFile "src/forum/templates/currentTheme.html")
 
 
 postThemeR :: ThemeId -> HandlerFor Forum Html
@@ -113,18 +118,52 @@ postThemeR tid = do
           let mbuser = Just user
           defaultLayout $(widgetTemplFile "src/forum/templates/currentTheme.html")
 
+getThemeEditR :: ThemeId -> HandlerFor Forum Html
+getThemeEditR tid = do
+    -- Get model info
+    db <- getsSite forumDb
+    Just theme <- liftIO $ getTheme tid db
+    user <- requireAuthId
+    when (not (isLeader theme user)) (permissionDenied "L'usuari no és el moderador")
+    tformw <- generateAFormPost (themeForm (Just theme))
+    -- Return HTML content
+    defaultLayout $ $(widgetTemplFile "src/forum/templates/updateTheme.html")
+
+postThemeEditR :: ThemeId -> HandlerFor Forum Html
+postThemeEditR tid = do
+  user <- requireAuthId
+  db <- getsSite forumDb
+  Just theme <- liftIO $ getTheme tid db
+  (tformr, tformw) <- runAFormPost (themeForm (Just theme))
+  case tformr of
+      FormSuccess edittheme -> do
+          liftIO $ updateTheme tid edittheme db
+          redirectRoute (ThemeEditR tid) []
+      _ -> do
+          let mbuser = Just user
+          defaultLayout $(widgetTemplFile "src/forum/templates/updateTheme.html")
+
+
 getQuestionR :: ThemeId -> QuestionId -> HandlerFor Forum Html
 getQuestionR tid qid = do
       -- fail "A completar per l'estudiant"
       db <- getsSite forumDb
+      mbuser <- maybeAuthId
       Just theme <- liftIO $ getTheme tid db
-      findquestion <- liftIO $ getQuestion qid db
+      Just question <- liftIO $ getQuestion qid db
       answers <- liftIO $ getAnswerList qid db
       aformw <- generateAFormPost (answerForm tid)
-      case findquestion of
-        Nothing -> defaultLayout $(widgetTemplFile "src/forum/templates/questionNotFound.html")
-        Just question -> defaultLayout $(widgetTemplFile "src/forum/templates/currentQuestion.html")
+      defaultLayout $(widgetTemplFile "src/forum/templates/currentQuestion.html")
 
+      --isJust :: Maybe a -> Bool
+      --returns True if the argument is Just
+      -- lookupPostParam :: Text -> m (Maybe Text)
+      -- lookupPostParams :: m [Text]
+      --
+      -- isDelete <- isJust <$> lookupPostParam "delete"
+      -- if isDelete then do
+      --
+      -- else
 
 postQuestionR :: ThemeId -> QuestionId -> HandlerFor Forum Html
 postQuestionR tid qid = do
@@ -133,6 +172,7 @@ postQuestionR tid qid = do
   (aformr, aformw) <- runAFormPost (answerForm qid)
   Just theme <- liftIO $ getTheme tid db
   Just question <- liftIO $ getQuestion qid db
+  answers <- liftIO $ getAnswerList qid db
   case aformr of
       FormSuccess newanswer -> do
           liftIO $ addAnswer newanswer db
@@ -141,3 +181,12 @@ postQuestionR tid qid = do
           questions <- liftIO $ getAnswerList qid db
           let mbuser = Just user
           defaultLayout $(widgetTemplFile "src/forum/templates/currentQuestion.html")
+
+-- mapM :: Monad m => (a -> m b ) -> [a] -> m [b]
+-- mapM_ :: Monad m => (a -> m b) -> [a] -> m ()
+-- for_ :: Monad m => [a] -> (a -> m b) -> m ()
+
+-- for list $ \ cp -> do
+--   case ... of
+--       Nothing -> pure ()
+--       Just aid -> liftIO $ deleteAnswer aid db

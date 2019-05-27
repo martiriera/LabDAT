@@ -17,7 +17,7 @@ import Network.Wai
 -- Application initialization
 
 -- NOTA: Canvieu al vostre fitxer de la base de dades
-forumDbName = "/home/pract/LabDAT/ldatusr14/project-p3/src/forum/sqlite/forum"
+forumDbName = "/home/pract/LabDAT/ldatusr14/Practica3/project-p3/src/forum/sqlite/forum"
 
 makeApp :: IO Application
 makeApp = do
@@ -40,9 +40,12 @@ instance Dispatch Forum where
                 [ onMethod1 "GET" getThemeR
                 , onMethod1 "POST" postThemeR
                 ]
+            <||> route ( onStatic ["themes"] <&&> onDynamic <&&> onStatic ["update"]) ThemeEditR
+                [ onMethod1 "GET" getThemeEditR
+                , onMethod1 "POST" postThemeEditR
+                ]
             <||> route ( onStatic ["themes"] <&&> onDynamic <&&> onStatic ["qs"] <&&> onDynamic ) QuestionR
                 [ onMethod2 "GET" getQuestionR
                 , onMethod2 "POST" postQuestionR
                 ]
             <||> routeSub (onStatic ["auth"]) AuthR getAuth
-
