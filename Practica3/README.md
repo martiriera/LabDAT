@@ -58,7 +58,8 @@ _Cal estar registrat com administrador per poder veure-ho._
 ## Veure les preguntes i respostes realitzades sobre un tema determinat. 
 Dins de cada tema, hi poden haver-hi vàries **preguntes**, i dins de cada pregunta, també poden haver-hi vàries **respostes**.
 
-Pel que fa a les **preguntes**, es mostren a través del mètode `getThemeR`. Les preguntes tenen com a atributs:
+### Preguntes
+Es mostren a través del mètode `getThemeR`. Les preguntes tenen com a atributs:
 ```haskell
 data Question = Question
         { qTheme :: ThemeId
@@ -73,7 +74,7 @@ data Question = Question
    ```haskell
    mbuser <- maybeAuthId
    ```
-   * La **data** en la que s'ha fet la pregunta, l'**assumpte**, i el **contingut** de la pregunta s'obtenen amb:
+   * La **data** en la que s'ha fet la pregunta, l'**assumpte**, i el **contingut** de la pregunta s'obtenen simplement fent un _get_ de la llista de respostes:
    ```haskell
    questions <- liftIO $ getQuestionList tid db
    ```
@@ -90,8 +91,46 @@ getThemeR tid = do
     qformw <- generateAFormPost (questionForm tid)
     defaultLayout $(widgetTemplFile "src/forum/templates/currentTheme.html")
    ```
-   [Aquí](http://soft0.upc.edu/~ldatusr14/practica3/forum.cgi/themes/1) el FrontEnd
+   [Aquí](http://soft0.upc.edu/~ldatusr14/practica3/forum.cgi/themes/1) un exemple del **FrontEnd**
    
+   
+### Respostes
+Es mostren a través del mètode `getQuestionR`. Les respostes consten dels següents atributs:
+
+```haskell
+data Answer = Answer
+        { aQuestion :: QuestionId
+        , aUser :: UserId
+        , aPosted :: UTCTime
+        , aText :: Text
+        }
+        deriving (Show)
+```
+   * L'**usuari** s'obté de la mateixa manera que amb les preguntes:
+   ```haskell
+   mbuser <- maybeAuthId
+   ```
+   * La **data** i el **contingut**, s'obtenen simplement de fer un _get_ de la llista de respostes amb:
+   ```haskell
+   answers <- liftIO $ getAnswerList qid db
+   ```
+A continuació es mostra la implementació del mètode `getQuestionR`:
+```haskell
+getQuestionR :: ThemeId -> QuestionId -> HandlerFor Forum Html
+getQuestionR tid qid = do
+      db <- getsSite forumDb
+      mbuser <- maybeAuthId
+      Just theme <- liftIO $ getTheme tid db
+      Just question <- liftIO $ getQuestion qid db
+      answers <- liftIO $ getAnswerList qid db
+      aformw <- generateAFormPost (answerForm tid)
+      defaultLayout $(widgetTemplFile "src/forum/templates/currentQuestion.html")
+```
+[Aquí](http://soft0.upc.edu/~ldatusr14/practica3/forum.cgi/themes/1/qs/1) un exemple del **Frontend**.
+   
+   
+   
+
  
 
 
