@@ -8,23 +8,52 @@ Aquesta pràctica tracta del diseny i implementació d'un simple forum. El fòru
 
 ## Consultar la llista de temes oberts sobre els que es poden fer qüestions i respostes.
 
-Amb aquest mètode es llisten tots els temes oberts. Cada tema conté:
+Cada tema conté: un **títol**, un **_leader_** del tema i una **descripció** del tema. Amb el mètode `getHomeR` es llisten tots els temes oberts:
 
-* El **títol**.
-* L'usuari que manté el tema: el **leader** del tema.
-* **Descripció** del tema.
-
-
-
-
-
-```
-getThemeR :: ThemeId -> HandlerFor Forum Html
-getThemeR tid = do    
+```haskell
+getHomeR :: HandlerFor Forum Html
+getHomeR = do
+    -- Get model info
     db <- getsSite forumDb
-    mbuser <- maybeAuthId    
-    Just theme <- liftIO $ getTheme tid db
-    questions <- liftIO $ getQuestionList tid db
-    qformw <- generateAFormPost (questionForm tid)
-    defaultLayout $(widgetTemplFile "src/forum/templates/currentTheme.html")   
+    themes <- liftIO $ getThemeList db
+    mbuser <- maybeAuthId
+    tformw <- generateAFormPost (themeForm Nothing)
+    defaultLayout $ $(widgetTemplFile "src/forum/templates/home.html")       
 ```
+
+## Si l'usuari s'ha autentificat i és el webmaster, afegir nous temes.
+
+Comprovem que l'**usuari** s'a autentificat amb:
+```haskell
+user <- requireAuthId
+```
+I que és **administrador** amb:
+```haskell
+when (not (isAdmin user)) (permissionDenied "L'usuari no és l'administrador")
+```
+Un cop es cumpleixen aquestes dos premises, dins del mètode `postHomeR` es crea un formulari per fer _post_ d'un tema:
+```haskell
+postHomeR :: HandlerFor Forum Html
+postHomeR = do
+    user <- requireAuthId
+    db <- getsSite forumDb
+    when (not (isAdmin user)) (permissionDenied "L'usuari no és l'administrador")
+    (tformr, tformw) <- runAFormPost (themeForm Nothing)
+    case tformr of
+      -- S'ha de comprovar si el Form és success, missing o failure
+        FormSuccess newtheme -> do
+            liftIO $ addTheme newtheme db
+            redirectRoute HomeR []
+        _ -> do
+            themes <- liftIO $ getThemeList db
+            let mbuser = Just user
+            defaultLayout $(widgetTemplFile "src/forum/templates/home.html")
+```
+Aquí es mostra el Front End del formulari que crea:
+![FormThemeScreenShot](/Practica3/project-p3/img/formThemes.png)
+
+[Aquí](http://soft0.upc.edu/~ldatusr14/practica3/forum.cgi/) online. _Cal estar registrat com administrador per poder veure-ho._
+
+
+
+
