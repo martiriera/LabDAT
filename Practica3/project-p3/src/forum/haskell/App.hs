@@ -24,7 +24,7 @@ makeApp = do
     -- Open the database (the model state)
     db <- openExistingDb forumDbName
     toApp Forum{ forumDb = db
-               , forumUsers = [("admin", "1234"), ("user1", "1234"), ("user2", "1234")]
+               , forumUsers = [("admin", "piñas"), ("user1", "piñas"), ("user2", "piñas")]
                }
 
 -- ---------------------------------------------------------------

@@ -8,10 +8,11 @@
 
 <body>
   <h1><strong>#{tTitle theme}</strong></h1>
-  $if{maybe False (isLeader theme) mbuser}<a href="@{ThemeEditR tid}">MODIFCAR TEMA</a>$end
+  $if{maybe False (isLeader theme) mbuser}<span style="background-color: #ccc; color: #2e6c80; display: inline-block; padding: 3px 10px; font-weight: bold; border-radius: 5px;">
+    <a href="@{ThemeEditR tid}">Modificar tema </a><span class="glyphicon glyphicon-wrench"></span></span>$end
   <h2>Responsable: <strong>#{tLeader theme}</strong> Categoria: <strong>#{tCategory theme}</strong></h2>
-  <pre><font size=4> #{tDescription theme}<font></pre>
-  <span class="glyphicon glyphicon-arrow-left"></span> <a href="@{HomeR}">Tornar enrere</a>
+  <pre><font size=4>#{tDescription theme}</font></pre>
+  <span class="glyphicon glyphicon-home"></span> <a href="@{HomeR}">Tornar al fòrum</a>
 
   <h2>Llistat de preguntes</h2>
   $forall{ p <- questions } <ul>

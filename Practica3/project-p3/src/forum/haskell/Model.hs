@@ -105,7 +105,8 @@ addTheme theme conn = do
     lastInsertRowId conn
 
 updateTheme :: ThemeId -> Theme -> ForumDb -> IO ()
-updateTheme tid theme conn =
+updateTheme tid theme conn = do 
+--    execute conn "UPDATE themes SET leader=?,category=?,title=?,description=? WHERE id = ?" (theme :. Only tid)
     execute conn "UPDATE themes SET leader=?,category=?,title=?,description=? WHERE id = ?" (theme :. Only tid)
 
 deleteTheme :: ThemeId -> ForumDb -> IO ()

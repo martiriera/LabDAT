@@ -20,6 +20,7 @@ import           Data.Text (Text)
 import           Control.Monad.IO.Class   -- imports liftIO
 import           Control.Monad
 import           Data.Time
+import           Data.Maybe
 
 {---------------------------------------------------------------------
                 TODO
@@ -64,21 +65,15 @@ getHomeR = do
     themes <- liftIO $ getThemeList db
     mbuser <- maybeAuthId
     tformw <- generateAFormPost (themeForm Nothing)
-    -- Return HTML content
     defaultLayout $ $(widgetTemplFile "src/forum/templates/home.html")
-
-    -- isUpdate <- isJust <$> lookupPostParam "update"
-    -- if isUpdate then do
-    --
-    -- else
 
 postHomeR :: HandlerFor Forum Html
 postHomeR = do
     user <- requireAuthId
     db <- getsSite forumDb
+    when (not (isAdmin user)) (permissionDenied "L'usuari no és l'administrador")
     (tformr, tformw) <- runAFormPost (themeForm Nothing)
     case tformr of
-      -- http://soft0.upc.edu/dat/datfw/haddock/datfw/Develop-DatFw-Form.html#v:runAFormPost
       -- S'ha de comprovar si el Form és success, missing o failure
         FormSuccess newtheme -> do
             liftIO $ addTheme newtheme db
@@ -138,8 +133,9 @@ postThemeEditR tid = do
   case tformr of
       FormSuccess edittheme -> do
           liftIO $ updateTheme tid edittheme db
-          redirectRoute (ThemeEditR tid) []
+          redirectRoute (ThemeR tid) []
       _ -> do
+          themes <- liftIO $ getThemeList db
           let mbuser = Just user
           defaultLayout $(widgetTemplFile "src/forum/templates/updateTheme.html")
 
@@ -155,32 +151,38 @@ getQuestionR tid qid = do
       aformw <- generateAFormPost (answerForm tid)
       defaultLayout $(widgetTemplFile "src/forum/templates/currentQuestion.html")
 
-      --isJust :: Maybe a -> Bool
-      --returns True if the argument is Just
-      -- lookupPostParam :: Text -> m (Maybe Text)
-      -- lookupPostParams :: m [Text]
-      --
-      -- isDelete <- isJust <$> lookupPostParam "delete"
-      -- if isDelete then do
-      --
-      -- else
-
 postQuestionR :: ThemeId -> QuestionId -> HandlerFor Forum Html
 postQuestionR tid qid = do
   db <- getsSite forumDb
   user <- requireAuthId
-  (aformr, aformw) <- runAFormPost (answerForm qid)
   Just theme <- liftIO $ getTheme tid db
   Just question <- liftIO $ getQuestion qid db
   answers <- liftIO $ getAnswerList qid db
-  case aformr of
-      FormSuccess newanswer -> do
-          liftIO $ addAnswer newanswer db
-          redirectRoute (QuestionR tid qid) []
-      _ -> do
-          questions <- liftIO $ getAnswerList qid db
-          let mbuser = Just user
-          defaultLayout $(widgetTemplFile "src/forum/templates/currentQuestion.html")
+  isDeleteQuestion <- isJust <$> lookupPostParam "delete-question"
+  isDeleteAnswer <- isJust <$> lookupPostParam "delete-answer"
+  if isDeleteQuestion then do
+    liftIO $ deleteQuestion qid db
+    liftIO $ forM_ answers $ \ (aid,_) -> deleteAnswer aid db
+    redirectRoute (ThemeR tid) []
+  else if isDeleteAnswer then do
+    Just textaid <- lookupPostParam "aid"
+    let Just aid = fromPathPiece textaid
+    liftIO $ deleteAnswer aid db
+    redirectRoute (QuestionR tid qid) []
+  else do
+    (aformr, aformw) <- runAFormPost (answerForm qid)
+    case aformr of
+        FormSuccess newanswer -> do
+            liftIO $ addAnswer newanswer db
+            redirectRoute (QuestionR tid qid) []
+        _ -> do
+            questions <- liftIO $ getAnswerList qid db
+            let mbuser = Just user
+            defaultLayout $(widgetTemplFile "src/forum/templates/currentQuestion.html")
+
+-- TEORIA
+-- isDelete <- isJust <$> lookupPostParam "delete"
+-- if isDelete then do
 
 -- mapM :: Monad m => (a -> m b ) -> [a] -> m [b]
 -- mapM_ :: Monad m => (a -> m b) -> [a] -> m ()

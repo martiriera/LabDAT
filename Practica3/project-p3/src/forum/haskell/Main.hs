@@ -16,7 +16,7 @@ import Control.Exception
 main :: IO ()
 main = do
     -- La funcio 'makeApp' (definida en el modul App) construeix una aplicacio WAI
-    -- a partir d'una aplicacio de tipus Forum (instancia de WebApp de DatFw)
+    -- a partir d'una aplicacio de tipus Tasks (instancia de WebApp de DatFw)
     r <- try makeApp
     case r of
         Right app -> do

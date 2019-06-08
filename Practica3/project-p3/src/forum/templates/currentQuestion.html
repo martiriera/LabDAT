@@ -7,20 +7,32 @@
 </head>
 
 <body>
-  <h2>Pregunta de <b>#{qUser question}</b> al tema <a href="@{ThemeR tid}">#{tTitle theme}</a></h2>
-  <h3><b>#{qTitle question}</b><i> el dia <b>#{show (qPosted question)}</b></i></h3>
-  <pre>#{qText question}</pre>
+  <h1>Pregunta de <b>#{qUser question}</b> al tema <a href="@{ThemeR tid}">#{tTitle theme}</a></h1>
+  <h2><b>#{qTitle question}</b><i> el dia <b>#{show (qPosted question)}</b></i>
+    $if{maybe False (isLeader theme) mbuser}
+    <form role="form" method="post" action="@{QuestionR tid qid}">
+      <button type="submit" class="btn btn-danger" name="delete-question">Eliminar pregunta</button>
+    </form>
+    $end
+  </h2>
+  <pre><font size=4>#{qText question}</font></pre>
   <span class="glyphicon glyphicon-arrow-left"></span> <a href="@{ThemeR tid}">Tornar al tema</a>
   <br>
   <span class="glyphicon glyphicon-home"></span> <a href="@{HomeR}">Tornar al fòrum</a>
 
-  <h3>Llistat de respostes</h3>
+  <h2>Llistat de respostes</h2>
   $forall{ p <- answers } <ul>
     <li>
       <p>Resposta de <b>#{aUser (snd p)}</b> a <b>#{show (aPosted (snd p))}:</b>
         <pre style="text-indent: 40px">#{aText (snd p)}</pre>
         <br>
       </p>
+      $if{maybe False (isLeader theme) mbuser}
+      <form role="form" method="post" action="">
+        <input type="hidden" name="aid" value="#{(fst p)}">
+        <button type="submit" class="btn btn-danger" name="delete-answer">Eliminar resposta</button>
+      </form>
+      $end
     </li>
     </ul>
     $end
@@ -37,10 +49,6 @@
         </div>
       </div>
       $end
-
-
-
-
 
 </body>
 
