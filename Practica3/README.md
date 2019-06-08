@@ -52,7 +52,45 @@ postHomeR = do
 Aquí es mostra el Front End del formulari que crea:
 ![FormThemeScreenShot](/Practica3/project-p3/img/formThemes.png)
 
-[Aquí](http://soft0.upc.edu/~ldatusr14/practica3/forum.cgi/) online. _Cal estar registrat com administrador per poder veure-ho._
+[Aquí](http://soft0.upc.edu/~ldatusr14/practica3/forum.cgi/) online.  
+_Cal estar registrat com administrador per poder veure-ho._
+
+## Veure les preguntes i respostes realitzades sobre un tema determinat. 
+Dins de cada tema, hi poden haver-hi vàries **preguntes**, i dins de cada pregunta, també poden haver-hi vàries **respostes**.
+
+Pel que fa a les **preguntes**, es mostren a través del mètode `getThemeR`. Les preguntes tenen com a atributs:
+```haskell
+data Question = Question
+        { qTheme :: ThemeId
+        , qUser :: UserId
+        , qPosted :: UTCTime
+        , qTitle :: Text
+        , qText :: Text
+        }
+        deriving (Show)
+```
+   * L'**usuari** que ha fet la pregunta s'obté amb:
+   ```haskell
+   mbuser <- maybeAuthId
+   ```
+   * La **data** en la que s'ha fet la pregunta, l'**assumpte**, i el **contingut** de la pregunta s'obtenen amb:
+   ```haskell
+   getThemeR :: ThemeId -> HandlerFor Forum Html
+getThemeR tid = do
+    db <- getsSite forumDb
+    mbuser <- maybeAuthId
+    Just theme <- liftIO $ getTheme tid db
+    questions <- liftIO $ getQuestionList tid db
+    qformw <- generateAFormPost (questionForm tid)
+    defaultLayout $(widgetTemplFile "src/forum/templates/currentTheme.html")
+   ```
+   
+ 
+
+
+
+
+
 
 
 
