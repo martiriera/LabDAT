@@ -75,6 +75,12 @@ data Question = Question
    ```
    * La **data** en la que s'ha fet la pregunta, l'**assumpte**, i el **contingut** de la pregunta s'obtenen amb:
    ```haskell
+   questions <- liftIO $ getQuestionList tid db
+   ```
+   
+   Finalment, la implementació del mètode que mostra les diferents preguntes i respostes:
+   
+   ```haskell
    getThemeR :: ThemeId -> HandlerFor Forum Html
 getThemeR tid = do
     db <- getsSite forumDb
@@ -84,6 +90,7 @@ getThemeR tid = do
     qformw <- generateAFormPost (questionForm tid)
     defaultLayout $(widgetTemplFile "src/forum/templates/currentTheme.html")
    ```
+   [Aquí](http://soft0.upc.edu/~ldatusr14/practica3/forum.cgi/themes/1) el FrontEnd
    
  
 
