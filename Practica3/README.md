@@ -127,6 +127,33 @@ getQuestionR tid qid = do
       defaultLayout $(widgetTemplFile "src/forum/templates/currentQuestion.html")
 ```
 [Aquí](http://soft0.upc.edu/~ldatusr14/practica3/forum.cgi/themes/1/qs/1) un exemple del **Frontend**.
+
+
+## Afegir noves preguntes a un determinat tema
+Aquesta funcionalitat s'implementa en el mètode `postQuestionR`.  
+   * El primer que s'ha de fer, seguin l'estructura ja vista, és comprovar que l'**usuari** s'ha autenticat:
+   ```haskell
+   user <- requireAuthId
+   ```
+    
+   * Després cal obrir el **formulari** de preguntes.
+   ```haskell
+   (qformr, qformw) <- runAFormPost (questionForm tid)
+   ```
+   Amb el format
+   ```haskell
+   questionForm :: ThemeId -> AForm (HandlerFor Forum) Question
+questionForm tid =
+    Question <$> pure tid
+           <*> liftToAForm requireAuthId --converteix accio del handler a un AForm --requireAuthId retorna autenticador o aborta
+           <*> liftToAForm (liftIO getCurrentTime)
+           <*> freq textField (withPlaceholder "Introduïu el títol de la pregunta" "Assumpte") Nothing
+           <*> freq textareaField (withPlaceholder "Introduïu la descripció de la pregunta" "Descripció") Nothing
+   ```
+   
+
+
+
    
    
    
