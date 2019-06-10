@@ -38,16 +38,18 @@ themeForm maybeth =
 questionForm :: ThemeId -> AForm (HandlerFor Forum) Question
 questionForm tid =
     Question <$> pure tid
-           <*> liftToAForm requireAuthId --converteix accio del handler a un AForm --requireAuthId retorna autenticador o aborta
+           <*> liftToAForm requireAuthId
+           --converteix accio del handler a un AForm
+           --requireAuthId retorna autenticador o aborta
            <*> liftToAForm (liftIO getCurrentTime)
            <*> freq textField (withPlaceholder "Introduïu el títol de la pregunta" "Assumpte") Nothing
            <*> freq textareaField (withPlaceholder "Introduïu la descripció de la pregunta" "Descripció") Nothing
-             --freq consrueix form amb camp obligatori
+           --freq consrueix form amb camp obligatori
 
 answerForm :: QuestionId -> AForm (HandlerFor Forum) Answer
 answerForm qid =
    Answer <$> pure qid
-          <*> liftToAForm requireAuthId --converteix accio del handler a un AForm --requireAuthId retorna autenticador o aborta
+          <*> liftToAForm requireAuthId --converteix accio del handler a un AForm. requireAuthId retorna autenticador o aborta
           <*> liftToAForm (liftIO getCurrentTime)
           <*> freq textField (withPlaceholder "Introduïu la resposta" "Resposta") Nothing
 
@@ -87,11 +89,8 @@ postHomeR = do
 
 getThemeR :: ThemeId -> HandlerFor Forum Html
 getThemeR tid = do
-    -- fail "A completar per l'estudiant"
     db <- getsSite forumDb
     mbuser <- maybeAuthId
-    -- let mbuser = Just user
-    -- mbuser <- requireAuthId
     Just theme <- liftIO $ getTheme tid db
     questions <- liftIO $ getQuestionList tid db
     qformw <- generateAFormPost (questionForm tid)
@@ -142,7 +141,6 @@ postThemeEditR tid = do
 
 getQuestionR :: ThemeId -> QuestionId -> HandlerFor Forum Html
 getQuestionR tid qid = do
-      -- fail "A completar per l'estudiant"
       db <- getsSite forumDb
       mbuser <- maybeAuthId
       Just theme <- liftIO $ getTheme tid db
