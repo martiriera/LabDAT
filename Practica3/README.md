@@ -53,7 +53,21 @@ postHomeR = do
             defaultLayout $(widgetTemplFile "src/forum/templates/home.html")
 ```
 
+Aquest formulari té la següent estructura:
+
+```haskell
+themeForm :: Maybe Theme -> AForm (HandlerFor Forum) Theme
+themeForm maybeth =
+    Theme <$> freq (checkM checkUserExists textField)
+                   (withPlaceholder "Introduiu el nom de l'usuari responsable" "Nom del responsable")
+                   (tLeader <$> maybeth)
+          <*> pure ""
+          <*> freq textField (withPlaceholder "Introduiu el títol del tema" "Titol del tema") (tTitle <$> maybeth)
+          <*> freq textareaField (withPlaceholder "Introduiu la descripció del tema" "Descripció") (tDescription <$> maybeth)
+```
+
 Aquí es mostra el Front End del formulari que crea:
+
 ![FormThemeScreenShot](/Practica3/project-p3/img/formThemes.png)
 
 
@@ -142,14 +156,14 @@ getQuestionR tid qid = do
 
 
 ## Afegir noves preguntes a un determinat tema
-Aquesta funcionalitat s'implementa en el mètode `postQuestionR`.  
+Aquesta funcionalitat s'implementa en el mètode `postThemeR`.  
 
 * El primer que s'ha de fer, seguint l'estructura ja vista, és comprovar que l'**usuari** s'ha autenticat:
     ```haskell
     user <- requireAuthId
     ```
     
-* Després cal obrir el **formulari** de preguntes.
+* Després cal cear el **formulari** de preguntes.
     ```haskell
     (qformr, qformw) <- runAFormPost (questionForm tid)
     ```   
@@ -163,7 +177,79 @@ Aquesta funcionalitat s'implementa en el mètode `postQuestionR`.
            <*> freq textField (withPlaceholder "Introduïu el títol de la pregunta" "Assumpte") Nothing
            <*> freq textareaField (withPlaceholder "Introduïu la descripció de la pregunta" "Descripció") Nothing
     ```
-   
+
+Aquí es mostra la impementació del mètode `postThemeR`
+
+```haskell
+postThemeR :: ThemeId -> HandlerFor Forum Html
+postThemeR tid = do
+  user <- requireAuthId
+  db <- getsSite forumDb
+  (qformr, qformw) <- runAFormPost (questionForm tid)
+  Just theme <- liftIO $ getTheme tid db
+  case qformr of
+      FormSuccess newquestion -> do
+          liftIO $ addQuestion newquestion db
+          redirectRoute (ThemeR tid) []
+      _ -> do
+          questions <- liftIO $ getQuestionList tid db
+          let mbuser = Just user
+          defaultLayout $(widgetTemplFile "src/forum/templates/currentTheme.html")
+```
+
+## Afegir noves respostes a una determinada pregunta
+Aquesta funcionalitat s'implementa en el mètode `postQuestionR`. Per poder respondre a una pregunta, l'usuari s'ha d'haver identificat. Seguidament es crea el formulari de resposta, tot això seguint la mateixa estructura que per el POST de les preguntes i de les respostes.
+
+El formulari de les respostes té la següent forma:
+
+```haskell
+answerForm :: QuestionId -> AForm (HandlerFor Forum) Answer
+answerForm qid =
+   Answer <$> pure qid
+          <*> liftToAForm requireAuthId --converteix accio del handler a un AForm. requireAuthId retorna autenticador o aborta
+          <*> liftToAForm (liftIO getCurrentTime)
+          <*> freq textField (withPlaceholder "Introduïu la resposta" "Resposta") Nothing
+```
+
+A continuació es mostra el mètode `postQuestionR`. Bàsicament, és anàlog als mètodes POST mostrats anteriorment. Hi han parts del codi que s'explicaran més endavant (esborrar preguntes i respostes).
+
+```haskell
+postQuestionR :: ThemeId -> QuestionId -> HandlerFor Forum Html
+postQuestionR tid qid = do
+  db <- getsSite forumDb
+  user <- requireAuthId
+  Just theme <- liftIO $ getTheme tid db
+  Just question <- liftIO $ getQuestion qid db
+  answers <- liftIO $ getAnswerList qid db
+  isDeleteQuestion <- isJust <$> lookupPostParam "delete-question"
+  isDeleteAnswer <- isJust <$> lookupPostParam "delete-answer"
+  if isDeleteQuestion then do
+    liftIO $ deleteQuestion qid db
+    liftIO $ forM_ answers $ \ (aid,_) -> deleteAnswer aid db
+    redirectRoute (ThemeR tid) []
+  else if isDeleteAnswer then do
+    Just textaid <- lookupPostParam "aid"
+    let Just aid = fromPathPiece textaid
+    liftIO $ deleteAnswer aid db
+    redirectRoute (QuestionR tid qid) []
+  else do
+    (aformr, aformw) <- runAFormPost (answerForm qid)
+    case aformr of
+        FormSuccess newanswer -> do
+            liftIO $ addAnswer newanswer db
+            redirectRoute (QuestionR tid qid) []
+        _ -> do
+            questions <- liftIO $ getAnswerList qid db
+            let mbuser = Just user
+            defaultLayout $(widgetTemplFile "src/forum/templates/currentQuestion.html")
+```
+
+# Modificacions de tema
+Per les modificacions s'ha decidit crear dos mètodes nous: `getThemeEditR` i `postThemeEditR`.
+Si l'usuari s'ha autentificat i és el leader d'un determinat tema, aquest el pot modificar
+
+
+ 
    
 
 
