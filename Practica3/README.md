@@ -1,5 +1,18 @@
 # Pràctica 3: Realització d'un fòrum
 
+# Índex
+   * [Funcionalitats implementades](#funcionalitats-implementades)
+      * [Consultar la llista de temes oberts sobre els que es poden fer qüestions i respostes.](#consultar-la-llista-de-temes-oberts-sobre-els-que-es-poden-fer-qüestions-i-respostes)
+      * [Si l'usuari s'ha autentificat i és el webmaster, afegir nous temes.](#si-lusuari-sha-autentificat-i-és-el-webmaster-afegir-nous-temes)
+      * [Veure les preguntes i respostes realitzades sobre un tema determinat.](#veure-les-preguntes-i-respostes-realitzades-sobre-un-tema-determinat)
+         * [Preguntes](#preguntes)
+         * [Respostes](#respostes)
+      * [Afegir noves preguntes a un determinat tema](#afegir-noves-preguntes-a-un-determinat-tema)
+      * [Afegir noves respostes a una determinada pregunta](#afegir-noves-respostes-a-una-determinada-pregunta)
+   * [Modificacions de tema](#modificacions-de-tema)
+
+
+
 Aquesta pràctica tracta del diseny i implementació d'un simple forum. El fòrum consta de **temes**, **preguntes** i **respostes**. Els administradors del fòrum poden crear temes, on, dins d'aquests, es crearan preguntes i respostes que podràn formular i respondre usuaris sense necessitat de ser administradors.
 
 [Aquí](http://soft0.upc.edu/~ldatusr14/practica3/forum.cgi) es troba el fòrum implementat.
@@ -244,7 +257,7 @@ postQuestionR tid qid = do
             defaultLayout $(widgetTemplFile "src/forum/templates/currentQuestion.html")
 ```
 
-# Modificacions de tema
+## Modificacions de tema
 Per les modificacions s'ha decidit crear dos mètodes nous: `getThemeEditR` i `postThemeEditR`.
 Si l'usuari s'ha autentificat i és el leader d'un determinat tema, aquest el pot modificar
 
