@@ -1,7 +1,16 @@
-## <span style="text-decoration:underline;">PRÀCTICA 1 - Introducció</span>
-
+# PRÀCTICA 1 - Introducció
 _Sergio Giménez i Martí Riera_
 
+## Índex
+
+* [<span>PRÀCTICA 1 - Introducció</span>](#pràctica-1---introducció)
+* [Primera part](#primera-part)
+* [Segona part](#segona-part)
+   * [Pregunta 1](#pregunta-1)
+   * [Pregunta 2](#pregunta-2)
+* [Tercera part](#tercera-part)
+   * [Pregunta 1](#pregunta-1-1)
+   * [Pregunta 2](#pregunta-2-1)
 
 ## Primera part
 
