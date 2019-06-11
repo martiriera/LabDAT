@@ -242,7 +242,7 @@ postQuestionR tid qid = do
 ```
 
 ## Modificacions a un tema
-L'objectiu era que un usuari autentificat com a leader d'un tema pugi editar-ne el contingut. Per comoditat, hem pensat que el millor seria generar un formulari semblant al de crear tema a una nova plantilla html.
+L'objectiu era que un usuari autentificat com a _leader_ d'un tema pugi editar-ne el contingut. Per comoditat, hem pensat que el millor seria generar un formulari semblant al de crear tema a una nova plantilla html.
 
 Primerament s'ha creat una nova ruta anomenada `themeEditR` al fitxer [App.hs](project-p3/src/forum/haskell/App.hs) que conté els també nous métodes `getThemeEditR` i `postThemeEditR`. Aquests són molt semblants als de la creació de temes:
 ```haskell
@@ -255,8 +255,8 @@ getThemeEditR tid = do
     tformw <- generateAFormPost (themeForm (Just theme))
     defaultLayout $ $(widgetTemplFile "src/forum/templates/updateTheme.html")
 ```
-Aquí veiem que per comprovar que l'usuari autentificat sigui el leader del tema, s'utilitza la funció `isLeader` que hem hagut de implementar a [Found.hs](project-p3/src/forum/haskell/Found.hs). 
-Aquesta funció espera un tema i una id d'usuari. Si el leader del tema i aquesta id coincideixen retorna True. False en cas contrari:
+Aquí veiem que per comprovar que l'usuari autentificat sigui el _leader_ del tema, s'utilitza la funció `isLeader` que hem hagut de implementar a [Found.hs](project-p3/src/forum/haskell/Found.hs). 
+Aquesta funció espera un tema i una id d'usuari. Si el _leader_ del tema i aquesta id coincideixen retorna True. False en cas contrari:
 
 ```haskell
 isLeader :: Theme -> UserId -> Bool
@@ -286,10 +286,49 @@ Sols ha calgut que el primer atribut de la funció sigui de tipus Maybe Theme en
 
 Un cop implementat això, sols ha calgut crear un enllaç a _currentTheme.html_ "protegit" amb isLeader que ens porti a la plantilla [updateTheme.html](project-p3/src/forum/templates/updateTheme.html). Aquesta sols conté el form per modificar el tema.
 
-  
+## Eliminar continguts
 
+El que preteniem era bàsicament que si un usuari és _leader_ ha de poder eliminar contingut que trobi inadequat per a un tema determinat. Per tant ha de ser capaç d'esborrar tant preguntes (i les respectives respostes) com respostes determinades a una pregunta. 
 
-   
+Per fer-ho s'ha afegit codi al `postQuestionR` que vàrem implementar en un principi. L'idea principal és que si l'usuari apreta cert botó, s'ha d'executar una part determinada del codi. Per tant el que hem de fer és dónar "nom" als botons i utilitzar `isJust` i `lookupPostParam` que ens ofereix _DatFw_. Hi haurà doncs dos blocs de codi (a part del que ja teníem, que crea una resposta) corresponents a les dues funcionalitats comentades al paràgraf anterior. Si ens fixem en aquests blocs:
+
+```haskell
+isDeleteQuestion <- isJust <$> lookupPostParam "delete-question"
+isDeleteAnswer <- isJust <$> lookupPostParam "delete-answer"
+if isDeleteQuestion then do
+  liftIO $ deleteQuestion qid db
+  liftIO $ forM_ answers $ \ (aid,_) -> deleteAnswer aid db
+  redirectRoute (ThemeR tid) []
+else if isDeleteAnswer then do
+  Just textaid <- lookupPostParam "aid"
+  let Just aid = fromPathPiece textaid
+  liftIO $ deleteAnswer aid db
+  redirectRoute (QuestionR tid qid) []
+```
+Si l'usuari apreta esborrar una pregunta i les respectives respostes s'executarà el codi de `isDeleteQuestion` que utilitza les funcions `deleteQuestion` i `deleteAnswer`, aquesta última cap, un o diversos cops. Es fa una redirecció cap al tema. 
+
+A la plantilla currentQuestion.html és on s'utilitza aquest codi i on es dóna nom al botó:
+
+```html
+  $if{maybe False (isLeader theme) mbuser}
+    <form role="form" method="post" action="@{QuestionR tid qid}">
+      <button type="submit" class="btn btn-danger" name="delete-question">Eliminar pregunta</button>
+    </form>
+    $end
+```
+
+Si el que vol es esborrar només una resposta en concret, s'ha d'obtenir l'identificador d'aquella resposta en concret. Tot i això no hem treballat amb cap `aid` al llarg de la pràctica. És per això que aquest `aid` es genera en el moment que apretem el botó i s'obté amb `lookupPostParam`. Convertim aquest `aid` a text utilitzant `formPathPiece` i cridem `deleteAnswer`. En aquest cas la redirecció es fa cap a la mateixa pregunta.
+
+A la plantilla utilitzem `input` per generar l'identificador, que obtenim del primer element de les parelles que confomen la llista de respostes en el moment que fem click al botó.
+
+```html
+$if{maybe False (isLeader theme) mbuser}
+ <form role="form" method="post" action="">
+  <input type="hidden" name="aid" value="#{(fst p)}">
+    <button type="submit" class="btn btn-danger" name="delete-answer">Eliminar resposta</button>
+ </form>
+$end
+```
 
 
 
