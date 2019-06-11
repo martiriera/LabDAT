@@ -62,7 +62,7 @@ instance Applicative Handler where
     --          pure  :: a -> Handler a
     --          (<*>) :: Handler (a -> b) -> Handler a -> Handler b
     pure x =
-        error "Handler.pure: A completar per l'estudiant"
+    HandlerC $ \ req st -> pure (x, st)
     HandlerC hf <*> HandlerC hx = HandlerC $ \ req st -> do
         ( f, st1 ) <- hf req st
         ( x, st2 ) <- hx req st1
