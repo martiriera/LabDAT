@@ -67,7 +67,7 @@ postHomeR = do
             let mbuser = Just user
             defaultLayout $(widgetTemplFile "src/forum/templates/home.html")
 ```
-És important també anar-nos fixant en tots els mètodes on redirigim, usant `redirectRoute`, a l'usuari quan fa submit dels formularis. 
+És important fixar-se on redirigim a l'usuari quan fa submit dels formularis. Això es fa usant `redirectRoute`.
 
 Aquest formulari té la següent estructura:
 
@@ -84,7 +84,7 @@ themeForm maybeth =
 _Nota: Tal i com hem pensat la implementació per a modificar temes, s'ha hagut de variar una mica themeForm_
 
 Aquí es mostra una captura del Front End del formulari que es genera:
-![FormThemeScreenShot](/project-p3/img/formThemes.png)
+![FormThemeScreenShot](Practica3/project-p3/img/formThemes.png)
 
 Els mètodes de `HomeR` així com les variables definides s'utilitzen per conformar la plantilla [home.html](project-p3/src/forum/templates/home.html) que és la pàgina principal del fòrum. Amb l'ajuda de `getThemeList`, hem posat a la variable _themes_  una llista de temes formats per parelles (tid, theme). D'aquest segon element de cada tema s'en extreu el contingut.
 
@@ -168,7 +168,7 @@ Per últim mostrem el formulari per crear respostes.
 ## Afegir noves preguntes a un determinat tema
 Amb `getThemeR` i `postThemeR` generem i executem el formulari que servirà per afegir preguntes al tema. Aquest té el format següent:
 
-    ```haskell
+ ```haskell
     questionForm :: ThemeId -> AForm (HandlerFor Forum) Question
     questionForm tid =
     Question <$> pure tid
@@ -176,7 +176,7 @@ Amb `getThemeR` i `postThemeR` generem i executem el formulari que servirà per 
            <*> liftToAForm (liftIO getCurrentTime)
            <*> freq textField (withPlaceholder "Introduïu el títol de la pregunta" "Assumpte") Nothing
            <*> freq textareaField (withPlaceholder "Introduïu la descripció de la pregunta" "Descripció") Nothing
-    ```
+```
 El métode `postThemeR` és:
 
 ```haskell
@@ -282,7 +282,7 @@ postThemeEditR tid = do
 
 En aquest métode veiem que s'utilitza la funció updateTheme que modifica una entrada a la base de dades. Un problema que vàrem tenir és que el formulari que generàvem, com és lògic, estava buit. El que necessitavem eren els valors dels atributs que hi havien en el tema a modificar. És per això que vàrem haver de modificar lleugerament themeForm. 
 
-Sols ha calgut que el primer atribut de la funció sigui de tipus Maybe Theme en comptes de sols Theme. I hem fet que els valors per defecte fossin `tLeader` `tTitle` i `tDescription` mapejats al context Maybe del tema. D'aquesta manera, quan a `getThemeEditR` i `postThemeEditR` invoquem ```haskell themeForm (Just theme) ``` els camps del formulari de tema s'omplen amb els valors que hi havia a `theme`. En canvi quan ho hem usat per crear un nou formulari hem fet ```haskell themeForm (Just Nothing)``` perquè els camps estiguessin buits.
+Sols ha calgut que el primer atribut de la funció sigui de tipus Maybe Theme en comptes de sols Theme. I hem fet que els valors per defecte fossin `tLeader` `tTitle` i `tDescription` mapejats al context Maybe del tema. D'aquesta manera, quan a `getThemeEditR` i `postThemeEditR` invoquem ```themeForm (Just theme)``` els camps del formulari de tema s'omplen amb els valors que hi havia a `theme`. En canvi quan ho hem usat per crear un nou formulari hem fet ```themeForm (Just Nothing)``` perquè els camps estiguéssin buits.
 
 Un cop implementat això, sols ha calgut crear un enllaç a _currentTheme.html_ "protegit" amb isLeader que ens porti a la plantilla [updateTheme.html](project-p3/src/forum/templates/updateTheme.html). Aquesta sols conté el form per modificar el tema.
 
