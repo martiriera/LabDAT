@@ -1,0 +1,17 @@
+#!/bin/bash
+
+cd $(dirname $0)/..
+
+src_dirs=src/haskell
+src_main=src/haskell/Main.hs
+cgi_dir=~/public_html/practica2
+cgi_file=$cgi_dir/calc.cgi
+output=build
+
+pack_db=~WEBprofe/usr/lib/ghc/x86_64-linux-ghc-7.10.3-packages.conf.d
+
+test -d $cgi_dir || mkdir -p $cgi_dir
+
+ghc --make -cpp -package-db $pack_db -DWAI_CGI -i$src_dirs -outputdir $output -o $cgi_file $src_main || exit $?
+chmod 700 $cgi_file
+

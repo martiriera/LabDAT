@@ -1,0 +1,21 @@
+#!/bin/bash
+
+cd $(dirname $0)/..
+
+src_app_dirs=src/forum-p4/haskell:src/dat-fw-ext/haskell
+src_main=src/forum-p4/haskell/Main.hs
+
+cgi_dir=~/public_html/practica4
+cgi_file=$cgi_dir/forum.cgi
+
+output=dist/build
+
+pack_db=~WEBprofe/usr/lib/ghc/x86_64-linux-ghc-7.10.3-packages.conf.d
+
+test -d $cgi_dir || mkdir -p $cgi_dir
+
+ghc --make -package-db $pack_db -DWAI_CGI -i$src_app_dirs -outputdir $output -o $cgi_file $src_main || exit $?
+chmod 700 $cgi_file
+
+cp -v -puRd src/forum-p4-sol/static/* $cgi_dir/
+

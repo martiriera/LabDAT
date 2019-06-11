@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<HTML>
+<HEAD>
+   <META charset="UTF-8">
+   <TITLE>DAT is life</TITLE>
+</HEAD>
+<!-- Background white, links blue (unvisited), navy (visited), red (active) -->
+<BODY TEXT="#000000" BGCOLOR="#FFFFFF" LINK="#0000FF" VLINK="#000080" ALINK="#FF0000">
+
+<H2>INDEX P1</H2>
+
+<P>Enllaç (<em>hyperlink</em>) a una altra URL. Per exemple a la <A
+HREF="http://soft0.upc.es/web/">p&agrave;gina principal</A>.</P>
+
+<P>Enllaç a un CGI que printa data i hora <A
+HREF="dia-hora.cgi">DATA I HORA</A>.</P>
+
+<P>Enllaç a un CGI que fa de comptador de visites <A
+HREF="comptador.cgi">COMPTADOR</A>.</P>
+
+Visitant número: <b><span class="counter"></span></b>
+
+
+<!-- suposant que el CGI comptador esta en la URL relativa 'comptadorJS.cgi' -->
+   <script type="text/javascript" src="/web/scripts/jquery-1.3.2.min.js"></script>
+   <script type="text/javascript">
+     $(document).ready(function(){
+       $.get("comptadorJS.cgi", function(value){
+         $(".counter").text(value);
+       });
+     });
+   </script>
+
+</BODY>
+</HTML>
+

@@ -1,0 +1,335 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <title>README.md - Grip</title>
+  <link rel="icon" href="/__/grip/static/favicon.ico" />
+  <link rel="stylesheet" href="/__/grip/asset/site-294181adec18ed639e160b96b45d17ac.css" />
+  <link rel="stylesheet" href="/__/grip/asset/github-a0c089291c156d30de0ef5ace8a88a97.css" />
+  <link rel="stylesheet" href="/__/grip/asset/frameworks-41c2037bf12f1e46d8f08b88a04a8d8f.css" />
+  <link rel="stylesheet" href="/__/grip/static/octicons/octicons.css" />
+  <style>
+    /* Page tweaks */
+    .preview-page {
+      margin-top: 64px;
+    }
+    /* User-content tweaks */
+    .timeline-comment-wrapper > .timeline-comment:after,
+    .timeline-comment-wrapper > .timeline-comment:before {
+      content: none;
+    }
+    /* User-content overrides */
+    .discussion-timeline.wide {
+      width: 920px;
+    }
+  </style>
+</head>
+<body>
+  <div class="page">
+    <div id="preview-page" class="preview-page" data-autorefresh-url="/__/grip/refresh/">
+
+    
+
+      <div role="main" class="main-content">
+        <div class="container new-discussion-timeline experiment-repo-nav">
+          <div class="repository-content">
+            <div id="readme" class="readme boxed-group clearfix announce instapaper_body md">
+              
+                <h3>
+                  <span class="octicon octicon-book"></span>
+                  README.md
+                </h3>
+              
+              <article class="markdown-body entry-content" itemprop="text" id="grip-content">
+                <h1>
+<a id="user-content-pràctica-3-realització-dun-fòrum" class="anchor" href="#pr%C3%A0ctica-3-realitzaci%C3%B3-dun-f%C3%B2rum" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>Pràctica 3: Realització d'un fòrum</h1>
+<p>Aquesta pràctica tracta del diseny i implementació d'un simple forum. El fòrum consta de <strong>temes</strong>, <strong>preguntes</strong> i <strong>respostes</strong>. Els administradors del fòrum poden crear temes, on, dins d'aquests, es crearan preguntes i respostes que podràn formular i respondre usuaris sense necessitat de ser administradors.</p>
+<p><a href="http://soft0.upc.edu/~ldatusr14/practica3/forum.cgi" rel="nofollow">Aquí</a> es troba el fòrum implementat.</p>
+<h1>
+<a id="user-content-índex" class="anchor" href="#%C3%ADndex" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>Índex</h1>
+<ul>
+<li>
+<a href="#funcionalitats-implementades">Funcionalitats implementades</a>
+<ul>
+<li><a href="#consultar-la-llista-de-temes-oberts-sobre-els-que-es-poden-fer-q%C3%BCestions-i-respostes">Consultar la llista de temes oberts sobre els que es poden fer qüestions i respostes.</a></li>
+<li><a href="#si-lusuari-sha-autentificat-i-%C3%A9s-el-webmaster-afegir-nous-temes">Si l'usuari s'ha autentificat i és el webmaster, afegir nous temes.</a></li>
+<li>
+<a href="#veure-les-preguntes-i-respostes-realitzades-sobre-un-tema-determinat">Veure les preguntes i respostes realitzades sobre un tema determinat.</a>
+<ul>
+<li><a href="#preguntes">Preguntes</a></li>
+<li><a href="#respostes">Respostes</a></li>
+</ul>
+</li>
+<li><a href="#afegir-noves-preguntes-a-un-determinat-tema">Afegir noves preguntes a un determinat tema</a></li>
+<li><a href="#afegir-noves-respostes-a-una-determinada-pregunta">Afegir noves respostes a una determinada pregunta</a></li>
+</ul>
+</li>
+<li><a href="#modificacions-de-tema">Modificacions de tema</a></li>
+</ul>
+<h1>
+<a id="user-content-funcionalitats-implementades" class="anchor" href="#funcionalitats-implementades" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>Funcionalitats implementades</h1>
+<h2>
+<a id="user-content-consultar-la-llista-de-temes-oberts-sobre-els-que-es-poden-fer-qüestions-i-respostes" class="anchor" href="#consultar-la-llista-de-temes-oberts-sobre-els-que-es-poden-fer-q%C3%BCestions-i-respostes" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>Consultar la llista de temes oberts sobre els que es poden fer qüestions i respostes.</h2>
+<p>Cada tema conté: un <strong>títol</strong>, un <strong><em>leader</em></strong> del tema i una <strong>descripció</strong> del tema. Amb el mètode <code>getHomeR</code> es llisten tots els temes oberts:</p>
+<div class="highlight highlight-source-haskell"><pre><span class="pl-en">getHomeR</span> <span class="pl-k">::</span> <span class="pl-en">HandlerFor</span> <span class="pl-en">Forum</span> <span class="pl-en">Html</span>
+getHomeR <span class="pl-k">=</span> <span class="pl-k">do</span>
+    <span class="pl-c"><span class="pl-c">--</span> Get model info</span>
+    db <span class="pl-k">&lt;-</span> getsSite forumDb
+    themes <span class="pl-k">&lt;-</span> liftIO <span class="pl-k">$</span> getThemeList db
+    mbuser <span class="pl-k">&lt;-</span> maybeAuthId
+    tformw <span class="pl-k">&lt;-</span> generateAFormPost (themeForm <span class="pl-ent">Nothing</span>)
+    defaultLayout <span class="pl-k">$</span> <span class="pl-k">$</span>(widgetTemplFile <span class="pl-s"><span class="pl-pds">"</span>src/forum/templates/home.html<span class="pl-pds">"</span></span>)       </pre></div>
+<h2>
+<a id="user-content-si-lusuari-sha-autentificat-i-és-el-webmaster-afegir-nous-temes" class="anchor" href="#si-lusuari-sha-autentificat-i-%C3%A9s-el-webmaster-afegir-nous-temes" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>Si l'usuari s'ha autentificat i és el webmaster, afegir nous temes.</h2>
+<p>Comprovem que l'<strong>usuari</strong> s'a autentificat amb:</p>
+<div class="highlight highlight-source-haskell"><pre>user <span class="pl-k">&lt;-</span> requireAuthId</pre></div>
+<p>I que és <strong>administrador</strong> amb:</p>
+<div class="highlight highlight-source-haskell"><pre>when (<span class="pl-c1">not</span> (isAdmin user)) (permissionDenied <span class="pl-s"><span class="pl-pds">"</span>L'usuari no és l'administrador<span class="pl-pds">"</span></span>)</pre></div>
+<p>Un cop es cumpleixen aquestes dos premises, dins del mètode <code>postHomeR</code> es crea un formulari per fer <em>post</em> d'un tema:</p>
+<div class="highlight highlight-source-haskell"><pre><span class="pl-en">postHomeR</span> <span class="pl-k">::</span> <span class="pl-en">HandlerFor</span> <span class="pl-en">Forum</span> <span class="pl-en">Html</span>
+postHomeR <span class="pl-k">=</span> <span class="pl-k">do</span>
+    user <span class="pl-k">&lt;-</span> requireAuthId
+    db <span class="pl-k">&lt;-</span> getsSite forumDb
+    when (<span class="pl-c1">not</span> (isAdmin user)) (permissionDenied <span class="pl-s"><span class="pl-pds">"</span>L'usuari no és l'administrador<span class="pl-pds">"</span></span>)
+    (tformr, tformw) <span class="pl-k">&lt;-</span> runAFormPost (themeForm <span class="pl-ent">Nothing</span>)
+    <span class="pl-k">case</span> tformr <span class="pl-k">of</span>
+      <span class="pl-c"><span class="pl-c">--</span> S'ha de comprovar si el Form és success, missing o failure</span>
+        <span class="pl-ent">FormSuccess</span> newtheme <span class="pl-k">-&gt;</span> <span class="pl-k">do</span>
+            liftIO <span class="pl-k">$</span> addTheme newtheme db
+            redirectRoute <span class="pl-ent">HomeR</span> <span class="pl-c1">[]</span>
+        _ <span class="pl-k">-&gt;</span> <span class="pl-k">do</span>
+            themes <span class="pl-k">&lt;-</span> liftIO <span class="pl-k">$</span> getThemeList db
+            <span class="pl-k">let</span> mbuser <span class="pl-k">=</span> <span class="pl-ent">Just</span> user
+            defaultLayout <span class="pl-k">$</span>(widgetTemplFile <span class="pl-s"><span class="pl-pds">"</span>src/forum/templates/home.html<span class="pl-pds">"</span></span>)</pre></div>
+<p>Aquest formulari té la següent estructura:</p>
+<div class="highlight highlight-source-haskell"><pre><span class="pl-en">themeForm</span> <span class="pl-k">::</span> <span class="pl-en"><span class="pl-c1">Maybe</span></span> <span class="pl-en">Theme</span> <span class="pl-k">-&gt;</span> <span class="pl-en">AForm</span> (<span class="pl-en">HandlerFor</span> <span class="pl-en">Forum</span>) <span class="pl-en">Theme</span>
+themeForm maybeth <span class="pl-k">=</span>
+    <span class="pl-ent">Theme</span> <span class="pl-k">&lt;$&gt;</span> freq (checkM checkUserExists textField)
+                   (withPlaceholder <span class="pl-s"><span class="pl-pds">"</span>Introduiu el nom de l'usuari responsable<span class="pl-pds">"</span></span> <span class="pl-s"><span class="pl-pds">"</span>Nom del responsable<span class="pl-pds">"</span></span>)
+                   (tLeader <span class="pl-k">&lt;$&gt;</span> maybeth)
+          <span class="pl-k">&lt;*&gt;</span> <span class="pl-c1">pure</span> <span class="pl-s"><span class="pl-pds">"</span><span class="pl-pds">"</span></span>
+          <span class="pl-k">&lt;*&gt;</span> freq textField (withPlaceholder <span class="pl-s"><span class="pl-pds">"</span>Introduiu el títol del tema<span class="pl-pds">"</span></span> <span class="pl-s"><span class="pl-pds">"</span>Titol del tema<span class="pl-pds">"</span></span>) (tTitle <span class="pl-k">&lt;$&gt;</span> maybeth)
+          <span class="pl-k">&lt;*&gt;</span> freq textareaField (withPlaceholder <span class="pl-s"><span class="pl-pds">"</span>Introduiu la descripció del tema<span class="pl-pds">"</span></span> <span class="pl-s"><span class="pl-pds">"</span>Descripció<span class="pl-pds">"</span></span>) (tDescription <span class="pl-k">&lt;$&gt;</span> maybeth)</pre></div>
+<h2>
+<a id="user-content-veure-les-preguntes-i-respostes-realitzades-sobre-un-tema-determinat" class="anchor" href="#veure-les-preguntes-i-respostes-realitzades-sobre-un-tema-determinat" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>Veure les preguntes i respostes realitzades sobre un tema determinat.</h2>
+<p>Dins de cada tema, hi poden haver-hi vàries <strong>preguntes</strong>, i dins de cada pregunta, també poden haver-hi vàries <strong>respostes</strong>.</p>
+<h3>
+<a id="user-content-preguntes" class="anchor" href="#preguntes" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>Preguntes</h3>
+<p>Es mostren a través del mètode <code>getThemeR</code>. Les preguntes tenen com a atributs:</p>
+<div class="highlight highlight-source-haskell"><pre><span class="pl-k">data</span> <span class="pl-en">Question</span> <span class="pl-k">=</span> <span class="pl-ent">Question</span>
+        <span class="pl-k">{</span> <span class="pl-e">qTheme</span> <span class="pl-k">::</span> <span class="pl-en">ThemeId</span>
+        , <span class="pl-e">qUser</span> <span class="pl-k">::</span> <span class="pl-en">UserId</span>
+        , <span class="pl-e">qPosted</span> <span class="pl-k">::</span> <span class="pl-en">UTCTime</span>
+        , <span class="pl-e">qTitle</span> <span class="pl-k">::</span> <span class="pl-en">Text</span>
+        , <span class="pl-e">qText</span> <span class="pl-k">::</span> <span class="pl-en">Text</span>
+        <span class="pl-k">}</span>
+        <span class="pl-k">deriving</span> (<span class="pl-e">Show</span>)</pre></div>
+<ul>
+<li>
+<p>L'<strong>usuari</strong> que ha fet la pregunta s'obté amb:</p>
+<div class="highlight highlight-source-haskell"><pre>mbuser <span class="pl-k">&lt;-</span> maybeAuthId</pre></div>
+</li>
+<li>
+<p>La <strong>data</strong> en la que s'ha fet la pregunta, l'<strong>assumpte</strong>, i el <strong>contingut</strong> de la pregunta s'obtenen simplement fent un <em>get</em> de la llista de respostes:</p>
+<div class="highlight highlight-source-haskell"><pre>questions <span class="pl-k">&lt;-</span> liftIO <span class="pl-k">$</span> getQuestionList tid db</pre></div>
+<p>Finalment, la implementació del mètode que mostra les diferents preguntes i respostes:</p>
+<div class="highlight highlight-source-haskell"><pre><span class="pl-en">getThemeR</span> <span class="pl-k">::</span> <span class="pl-en">ThemeId</span> <span class="pl-k">-&gt;</span> <span class="pl-en">HandlerFor</span> <span class="pl-en">Forum</span> <span class="pl-en">Html</span>
+getThemeR tid <span class="pl-k">=</span> <span class="pl-k">do</span>
+db <span class="pl-k">&lt;-</span> getsSite forumDb
+mbuser <span class="pl-k">&lt;-</span> maybeAuthId
+<span class="pl-ent">Just</span> theme <span class="pl-k">&lt;-</span> liftIO <span class="pl-k">$</span> getTheme tid db
+questions <span class="pl-k">&lt;-</span> liftIO <span class="pl-k">$</span> getQuestionList tid db
+qformw <span class="pl-k">&lt;-</span> generateAFormPost (questionForm tid)
+defaultLayout <span class="pl-k">$</span>(widgetTemplFile <span class="pl-s"><span class="pl-pds">"</span>src/forum/templates/currentTheme.html<span class="pl-pds">"</span></span>)</pre></div>
+</li>
+</ul>
+<p><a href="http://soft0.upc.edu/~ldatusr14/practica3/forum.cgi/themes/1" rel="nofollow">Aquí</a> un exemple del <strong>FrontEnd</strong></p>
+<h3>
+<a id="user-content-respostes" class="anchor" href="#respostes" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>Respostes</h3>
+<p>Es mostren a través del mètode <code>getQuestionR</code>. Les respostes consten dels següents atributs:</p>
+<div class="highlight highlight-source-haskell"><pre><span class="pl-k">data</span> <span class="pl-en">Answer</span> <span class="pl-k">=</span> <span class="pl-ent">Answer</span>
+        <span class="pl-k">{</span> <span class="pl-e">aQuestion</span> <span class="pl-k">::</span> <span class="pl-en">QuestionId</span>
+        , <span class="pl-e">aUser</span> <span class="pl-k">::</span> <span class="pl-en">UserId</span>
+        , <span class="pl-e">aPosted</span> <span class="pl-k">::</span> <span class="pl-en">UTCTime</span>
+        , <span class="pl-e">aText</span> <span class="pl-k">::</span> <span class="pl-en">Text</span>
+        <span class="pl-k">}</span>
+        <span class="pl-k">deriving</span> (<span class="pl-e">Show</span>)</pre></div>
+<ul>
+<li>
+<p>L'<strong>usuari</strong> s'obté de la mateixa manera que amb les preguntes:</p>
+<div class="highlight highlight-source-haskell"><pre>mbuser <span class="pl-k">&lt;-</span> maybeAuthId</pre></div>
+</li>
+<li>
+<p>La <strong>data</strong> i el <strong>contingut</strong>, s'obtenen simplement de fer un <em>get</em> de la llista de respostes amb:</p>
+<div class="highlight highlight-source-haskell"><pre>answers <span class="pl-k">&lt;-</span> liftIO <span class="pl-k">$</span> getAnswerList qid db</pre></div>
+</li>
+</ul>
+<p>A continuació es mostra la implementació del mètode <code>getQuestionR</code>:</p>
+<div class="highlight highlight-source-haskell"><pre><span class="pl-en">getQuestionR</span> <span class="pl-k">::</span> <span class="pl-en">ThemeId</span> <span class="pl-k">-&gt;</span> <span class="pl-en">QuestionId</span> <span class="pl-k">-&gt;</span> <span class="pl-en">HandlerFor</span> <span class="pl-en">Forum</span> <span class="pl-en">Html</span>
+getQuestionR tid qid <span class="pl-k">=</span> <span class="pl-k">do</span>
+      db <span class="pl-k">&lt;-</span> getsSite forumDb
+      mbuser <span class="pl-k">&lt;-</span> maybeAuthId
+      <span class="pl-ent">Just</span> theme <span class="pl-k">&lt;-</span> liftIO <span class="pl-k">$</span> getTheme tid db
+      <span class="pl-ent">Just</span> question <span class="pl-k">&lt;-</span> liftIO <span class="pl-k">$</span> getQuestion qid db
+      answers <span class="pl-k">&lt;-</span> liftIO <span class="pl-k">$</span> getAnswerList qid db
+      aformw <span class="pl-k">&lt;-</span> generateAFormPost (answerForm tid)
+      defaultLayout <span class="pl-k">$</span>(widgetTemplFile <span class="pl-s"><span class="pl-pds">"</span>src/forum/templates/currentQuestion.html<span class="pl-pds">"</span></span>)</pre></div>
+<p><a href="http://soft0.upc.edu/~ldatusr14/practica3/forum.cgi/themes/1/qs/1" rel="nofollow">Aquí</a> un exemple del <strong>Frontend</strong>.</p>
+<h2>
+<a id="user-content-afegir-noves-preguntes-a-un-determinat-tema" class="anchor" href="#afegir-noves-preguntes-a-un-determinat-tema" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>Afegir noves preguntes a un determinat tema</h2>
+<p>Aquesta funcionalitat s'implementa en el mètode <code>postThemeR</code>.</p>
+<ul>
+<li>
+<p>El primer que s'ha de fer, seguint l'estructura ja vista, és comprovar que l'<strong>usuari</strong> s'ha autenticat:</p>
+<div class="highlight highlight-source-haskell"><pre>user <span class="pl-k">&lt;-</span> requireAuthId</pre></div>
+</li>
+<li>
+<p>Després cal cear el <strong>formulari</strong> de preguntes.</p>
+<div class="highlight highlight-source-haskell"><pre>(qformr, qformw) <span class="pl-k">&lt;-</span> runAFormPost (questionForm tid)</pre></div>
+<p>Aquest formulari té el format:</p>
+<div class="highlight highlight-source-haskell"><pre><span class="pl-en">questionForm</span> <span class="pl-k">::</span> <span class="pl-en">ThemeId</span> <span class="pl-k">-&gt;</span> <span class="pl-en">AForm</span> (<span class="pl-en">HandlerFor</span> <span class="pl-en">Forum</span>) <span class="pl-en">Question</span>
+questionForm tid <span class="pl-k">=</span>
+<span class="pl-ent">Question</span> <span class="pl-k">&lt;$&gt;</span> <span class="pl-c1">pure</span> tid
+       <span class="pl-k">&lt;*&gt;</span> liftToAForm requireAuthId <span class="pl-c"><span class="pl-c">--</span>converteix accio del handler a un AForm --requireAuthId retorna autenticador o aborta</span>
+       <span class="pl-k">&lt;*&gt;</span> liftToAForm (liftIO getCurrentTime)
+       <span class="pl-k">&lt;*&gt;</span> freq textField (withPlaceholder <span class="pl-s"><span class="pl-pds">"</span>Introduïu el títol de la pregunta<span class="pl-pds">"</span></span> <span class="pl-s"><span class="pl-pds">"</span>Assumpte<span class="pl-pds">"</span></span>) <span class="pl-ent">Nothing</span>
+       <span class="pl-k">&lt;*&gt;</span> freq textareaField (withPlaceholder <span class="pl-s"><span class="pl-pds">"</span>Introduïu la descripció de la pregunta<span class="pl-pds">"</span></span> <span class="pl-s"><span class="pl-pds">"</span>Descripció<span class="pl-pds">"</span></span>) <span class="pl-ent">Nothing</span></pre></div>
+</li>
+</ul>
+<p>Aquí es mostra la impementació del mètode <code>postThemeR</code></p>
+<div class="highlight highlight-source-haskell"><pre><span class="pl-en">postThemeR</span> <span class="pl-k">::</span> <span class="pl-en">ThemeId</span> <span class="pl-k">-&gt;</span> <span class="pl-en">HandlerFor</span> <span class="pl-en">Forum</span> <span class="pl-en">Html</span>
+postThemeR tid <span class="pl-k">=</span> <span class="pl-k">do</span>
+  user <span class="pl-k">&lt;-</span> requireAuthId
+  db <span class="pl-k">&lt;-</span> getsSite forumDb
+  (qformr, qformw) <span class="pl-k">&lt;-</span> runAFormPost (questionForm tid)
+  <span class="pl-ent">Just</span> theme <span class="pl-k">&lt;-</span> liftIO <span class="pl-k">$</span> getTheme tid db
+  <span class="pl-k">case</span> qformr <span class="pl-k">of</span>
+      <span class="pl-ent">FormSuccess</span> newquestion <span class="pl-k">-&gt;</span> <span class="pl-k">do</span>
+          liftIO <span class="pl-k">$</span> addQuestion newquestion db
+          redirectRoute (<span class="pl-ent">ThemeR</span> tid) <span class="pl-c1">[]</span>
+      _ <span class="pl-k">-&gt;</span> <span class="pl-k">do</span>
+          questions <span class="pl-k">&lt;-</span> liftIO <span class="pl-k">$</span> getQuestionList tid db
+          <span class="pl-k">let</span> mbuser <span class="pl-k">=</span> <span class="pl-ent">Just</span> user
+          defaultLayout <span class="pl-k">$</span>(widgetTemplFile <span class="pl-s"><span class="pl-pds">"</span>src/forum/templates/currentTheme.html<span class="pl-pds">"</span></span>)</pre></div>
+<h2>
+<a id="user-content-afegir-noves-respostes-a-una-determinada-pregunta" class="anchor" href="#afegir-noves-respostes-a-una-determinada-pregunta" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>Afegir noves respostes a una determinada pregunta</h2>
+<p>Aquesta funcionalitat s'implementa en el mètode <code>postQuestionR</code>. Per poder respondre a una pregunta, l'usuari s'ha d'haver identificat. Seguidament es crea el formulari de resposta, tot això seguint la mateixa estructura que per el POST de les preguntes i de les respostes.</p>
+<p>El formulari de les respostes té la següent forma:</p>
+<div class="highlight highlight-source-haskell"><pre><span class="pl-en">answerForm</span> <span class="pl-k">::</span> <span class="pl-en">QuestionId</span> <span class="pl-k">-&gt;</span> <span class="pl-en">AForm</span> (<span class="pl-en">HandlerFor</span> <span class="pl-en">Forum</span>) <span class="pl-en">Answer</span>
+answerForm qid <span class="pl-k">=</span>
+   <span class="pl-ent">Answer</span> <span class="pl-k">&lt;$&gt;</span> <span class="pl-c1">pure</span> qid
+          <span class="pl-k">&lt;*&gt;</span> liftToAForm requireAuthId <span class="pl-c"><span class="pl-c">--</span>converteix accio del handler a un AForm. requireAuthId retorna autenticador o aborta</span>
+          <span class="pl-k">&lt;*&gt;</span> liftToAForm (liftIO getCurrentTime)
+          <span class="pl-k">&lt;*&gt;</span> freq textField (withPlaceholder <span class="pl-s"><span class="pl-pds">"</span>Introduïu la resposta<span class="pl-pds">"</span></span> <span class="pl-s"><span class="pl-pds">"</span>Resposta<span class="pl-pds">"</span></span>) <span class="pl-ent">Nothing</span></pre></div>
+<p>A continuació es mostra el mètode <code>postQuestionR</code>. Bàsicament, és anàlog als mètodes POST mostrats anteriorment. Hi han parts del codi que s'explicaran més endavant (esborrar preguntes i respostes).</p>
+<div class="highlight highlight-source-haskell"><pre><span class="pl-en">postQuestionR</span> <span class="pl-k">::</span> <span class="pl-en">ThemeId</span> <span class="pl-k">-&gt;</span> <span class="pl-en">QuestionId</span> <span class="pl-k">-&gt;</span> <span class="pl-en">HandlerFor</span> <span class="pl-en">Forum</span> <span class="pl-en">Html</span>
+postQuestionR tid qid <span class="pl-k">=</span> <span class="pl-k">do</span>
+  db <span class="pl-k">&lt;-</span> getsSite forumDb
+  user <span class="pl-k">&lt;-</span> requireAuthId
+  <span class="pl-ent">Just</span> theme <span class="pl-k">&lt;-</span> liftIO <span class="pl-k">$</span> getTheme tid db
+  <span class="pl-ent">Just</span> question <span class="pl-k">&lt;-</span> liftIO <span class="pl-k">$</span> getQuestion qid db
+  answers <span class="pl-k">&lt;-</span> liftIO <span class="pl-k">$</span> getAnswerList qid db
+  isDeleteQuestion <span class="pl-k">&lt;-</span> isJust <span class="pl-k">&lt;$&gt;</span> lookupPostParam <span class="pl-s"><span class="pl-pds">"</span>delete-question<span class="pl-pds">"</span></span>
+  isDeleteAnswer <span class="pl-k">&lt;-</span> isJust <span class="pl-k">&lt;$&gt;</span> lookupPostParam <span class="pl-s"><span class="pl-pds">"</span>delete-answer<span class="pl-pds">"</span></span>
+  <span class="pl-k">if</span> isDeleteQuestion <span class="pl-k">then</span> <span class="pl-k">do</span>
+    liftIO <span class="pl-k">$</span> deleteQuestion qid db
+    liftIO <span class="pl-k">$</span> forM_ answers <span class="pl-k">$</span> <span class="pl-k">\</span> (aid,_) <span class="pl-k">-&gt;</span> deleteAnswer aid db
+    redirectRoute (<span class="pl-ent">ThemeR</span> tid) <span class="pl-c1">[]</span>
+  <span class="pl-k">else</span> <span class="pl-k">if</span> isDeleteAnswer <span class="pl-k">then</span> <span class="pl-k">do</span>
+    <span class="pl-ent">Just</span> textaid <span class="pl-k">&lt;-</span> lookupPostParam <span class="pl-s"><span class="pl-pds">"</span>aid<span class="pl-pds">"</span></span>
+    <span class="pl-k">let</span> <span class="pl-ent">Just</span> aid <span class="pl-k">=</span> fromPathPiece textaid
+    liftIO <span class="pl-k">$</span> deleteAnswer aid db
+    redirectRoute (<span class="pl-ent">QuestionR</span> tid qid) <span class="pl-c1">[]</span>
+  <span class="pl-k">else</span> <span class="pl-k">do</span>
+    (aformr, aformw) <span class="pl-k">&lt;-</span> runAFormPost (answerForm qid)
+    <span class="pl-k">case</span> aformr <span class="pl-k">of</span>
+        <span class="pl-ent">FormSuccess</span> newanswer <span class="pl-k">-&gt;</span> <span class="pl-k">do</span>
+            liftIO <span class="pl-k">$</span> addAnswer newanswer db
+            redirectRoute (<span class="pl-ent">QuestionR</span> tid qid) <span class="pl-c1">[]</span>
+        _ <span class="pl-k">-&gt;</span> <span class="pl-k">do</span>
+            questions <span class="pl-k">&lt;-</span> liftIO <span class="pl-k">$</span> getAnswerList qid db
+            <span class="pl-k">let</span> mbuser <span class="pl-k">=</span> <span class="pl-ent">Just</span> user
+            defaultLayout <span class="pl-k">$</span>(widgetTemplFile <span class="pl-s"><span class="pl-pds">"</span>src/forum/templates/currentQuestion.html<span class="pl-pds">"</span></span>)</pre></div>
+<h1>
+<a id="user-content-modificacions-de-tema" class="anchor" href="#modificacions-de-tema" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>Modificacions de tema</h1>
+<p>Per les modificacions s'ha decidit crear dos mètodes nous: <code>getThemeEditR</code> i <code>postThemeEditR</code>.
+Si l'usuari s'ha autentificat i és el leader d'un determinat tema, aquest el pot modificar</p>
+
+              </article>
+            </div>
+          </div>
+        </div>
+      </div>
+
+    
+
+  </div>
+  <div>&nbsp;</div>
+  </div><script>
+    function showCanonicalImages() {
+      var images = document.getElementsByTagName('img');
+      if (!images) {
+        return;
+      }
+      for (var index = 0; index < images.length; index++) {
+        var image = images[index];
+        if (image.getAttribute('data-canonical-src') && image.src !== image.getAttribute('data-canonical-src')) {
+          image.src = image.getAttribute('data-canonical-src');
+        }
+      }
+    }
+
+    function scrollToHash() {
+      if (location.hash && !document.querySelector(':target')) {
+        var element = document.getElementById('user-content-' + location.hash.slice(1));
+        if (element) {
+           element.scrollIntoView();
+        }
+      }
+    }
+
+    function autorefreshContent(eventSourceUrl) {
+      var initialTitle = document.title;
+      var contentElement = document.getElementById('grip-content');
+      var source = new EventSource(eventSourceUrl);
+      var isRendering = false;
+
+      source.onmessage = function(ev) {
+        var msg = JSON.parse(ev.data);
+        if (msg.updating) {
+          isRendering = true;
+          document.title = '(Rendering) ' + document.title;
+        } else {
+          isRendering = false;
+          document.title = initialTitle;
+          contentElement.innerHTML = msg.content;
+          showCanonicalImages();
+        }
+      }
+
+      source.onerror = function(e) {
+        if (e.readyState === EventSource.CLOSED && isRendering) {
+          isRendering = false;
+          document.title = initialTitle;
+        }
+      }
+    }
+
+    window.onhashchange = function() {
+      scrollToHash();
+    }
+
+    window.onload = function() {
+      scrollToHash();
+    }
+
+    showCanonicalImages();
+
+    var autorefreshUrl = document.getElementById('preview-page').getAttribute('data-autorefresh-url');
+    if (autorefreshUrl) {
+      autorefreshContent(autorefreshUrl);
+    }
+  </script>
+</body>
+</html>

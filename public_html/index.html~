@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<HTML>
+<HEAD>
+   <META charset="UTF-8">
+   <TITLE>DAT is life</TITLE>
+</HEAD>
+<!-- Background white, links blue (unvisited), navy (visited), red (active) -->
+<BODY TEXT="#000000" BGCOLOR="#FFFFFF" LINK="#0000FF" VLINK="#000080" ALINK="#FF0000">
+
+<H2>Títols (capçaleres) de diferents nivells (H1/H2/H3/H4/H5/H6)</H2>
+
+<H3>Un títol de nivell inferior</H3>
+
+<P>Paràgrafs de text
+(múltiples 
+línies).
+<BR>
+Línia separada
+</P>
+
+<P>Llista ordenada (numerada):</P>
+<OL>
+<LI> Item 1</LI>
+<LI> Item 2</LI>
+</OL>
+
+<P>Llista no numerada:</P>
+<UL>
+<LI> Item 1</LI>
+<LI> Item 2</LI>
+</UL>
+
+<P>Enllaç (<em>hyperlink</em>) a una altra URL. Per exemple a la <A
+HREF="http://soft0.upc.es/web/">p&agrave;gina principal</A>.</P>
+
+<P>Enllaç (<em>hyperlink</em>) a la pratica 1:<A
+HREF="http://soft0.upc.edu/~ldatusr14/practica1/">pr&agrave;ctica 1</A>.</P>
+
+<P>Enllaç (<em>hyperlink</em>) a la pratica 2:<A
+HREF="http://soft0.upc.edu/~ldatusr14/practica2/">[Calculadora]</A>.</P>
+
+</BODY>
+</HTML>
+

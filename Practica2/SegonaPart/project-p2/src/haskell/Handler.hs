@@ -1,6 +1,3 @@
-
-{-# LANGUAGE OverloadedStrings #-}
-
 module Handler
     -- Exporta les seguents declaracions d'aquest modul
     ( Handler, dispatchHandler, HandlerResponse(..)
@@ -61,8 +58,9 @@ instance Applicative Handler where
     -- tipus dels metodes en aquesta instancia:
     --          pure  :: a -> Handler a
     --          (<*>) :: Handler (a -> b) -> Handler a -> Handler b
-    pure x =
-    HandlerC $ \ req st -> pure (x, st)
+    
+    pure x = HandlerC $ \ req st -> pure (x, st)
+        -- error "Handler.pure: A completar per l'estudiant"
     HandlerC hf <*> HandlerC hx = HandlerC $ \ req st -> do
         ( f, st1 ) <- hf req st
         ( x, st2 ) <- hx req st1
@@ -115,9 +113,9 @@ getMethod = HandlerC $ \ req st -> pure (requestMethod req, st)
 -- Obte el valor de l'atribut de sessio indicat amb el nom.
 -- Retorna Nothing si l'atribut indicat no existeix o no te la sintaxis adequada.
 getSession :: Read a => Text -> Handler (Maybe a)
-getSession name =
-  do
-    aux <- getSession_ name
+getSession name = do
+    aux <- HandlerC $ \ req st -> do
+	    pure (lookup name (hsSession st), st)
     case aux of
       Nothing -> pure Nothing
       Just t -> pure $ readt t
@@ -137,3 +135,4 @@ getPostQuery = HandlerC $ \ req st -> do
         Nothing -> do
             query <- U.requestGetPostQuery req
             pure ( query, hsSetQuery (Just query) st )
+

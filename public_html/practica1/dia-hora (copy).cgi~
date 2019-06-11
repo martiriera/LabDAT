@@ -1,0 +1,9 @@
+#!/bin/sh
+
+# comptador de visites
+set -f
+
+V = $(expr $V + 1)
+echo $V > visites.html
+
+
