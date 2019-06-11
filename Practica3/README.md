@@ -1,5 +1,9 @@
 # Pràctica 3: Realització d'un fòrum
 
+Aquesta pràctica tracta del diseny i implementació d'un simple forum. El fòrum consta de **temes**, **preguntes** i **respostes**. Els administradors del fòrum poden crear temes, on, dins d'aquests, es crearan preguntes i respostes que podràn formular i respondre usuaris sense necessitat de ser administradors.
+
+[Aquí](http://soft0.upc.edu/~ldatusr14/practica3/forum.cgi) es troba el fòrum implementat.
+
 # Índex
    * [Funcionalitats implementades](#funcionalitats-implementades)
       * [Consultar la llista de temes oberts sobre els que es poden fer qüestions i respostes.](#consultar-la-llista-de-temes-oberts-sobre-els-que-es-poden-fer-qüestions-i-respostes)
@@ -11,11 +15,6 @@
       * [Afegir noves respostes a una determinada pregunta](#afegir-noves-respostes-a-una-determinada-pregunta)
    * [Modificacions de tema](#modificacions-de-tema)
 
-
-
-Aquesta pràctica tracta del diseny i implementació d'un simple forum. El fòrum consta de **temes**, **preguntes** i **respostes**. Els administradors del fòrum poden crear temes, on, dins d'aquests, es crearan preguntes i respostes que podràn formular i respondre usuaris sense necessitat de ser administradors.
-
-[Aquí](http://soft0.upc.edu/~ldatusr14/practica3/forum.cgi) es troba el fòrum implementat.
 
 # Funcionalitats implementades
 
