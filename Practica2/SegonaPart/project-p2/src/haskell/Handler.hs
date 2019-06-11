@@ -126,7 +126,7 @@ getSession name =
 setSession :: Show a => Text -> a -> Handler ()
 setSession name value = HandlerC $ \ req st -> do
     let newsession = (name, showt value) : filter ((name /=) . fst) (hsSession st)
-    error "Handler.setSession: A completar per l'estudiant"
+    pure ((), (hsSetSession newsession) st)
 
 -- Obte els parametres del contingut de la peticio.
 getPostQuery :: Handler Query
