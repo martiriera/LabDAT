@@ -109,8 +109,8 @@ dispatchHandler handler req respond = do
 
 -- Obte el metode HTTP de la peticio
 getMethod :: Handler Method
-getMethod =
-    error "Handler.getMethod: A completar per l'estudiant"
+getMethod = HandlerC $ \ req st -> pure (requestMethod req, st)
+-- On requestMethod :: Request -> Method
 
 -- Obte el valor de l'atribut de sessio indicat amb el nom.
 -- Retorna Nothing si l'atribut indicat no existeix o no te la sintaxis adequada.
