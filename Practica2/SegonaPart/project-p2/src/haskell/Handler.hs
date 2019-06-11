@@ -116,7 +116,11 @@ getMethod = HandlerC $ \ req st -> pure (requestMethod req, st)
 -- Retorna Nothing si l'atribut indicat no existeix o no te la sintaxis adequada.
 getSession :: Read a => Text -> Handler (Maybe a)
 getSession name =
-    error "Handler.getSession: A completar per l'estudiant"
+  do
+    aux <- getSession_ name
+    case aux of
+      Nothing -> pure Nothing
+      Just t -> pure $ readt t
 
 -- Fixa l'atribut de sessio indicat amb el nom al valor indicat.
 setSession :: Show a => Text -> a -> Handler ()
