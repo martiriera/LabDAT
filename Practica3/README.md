@@ -1,6 +1,6 @@
 # Pràctica 3: Realització d'un fòrum
 
-Aquesta pràctica tracta del diseny i implementació d'un simple forum. El fòrum consta de **temes**, **preguntes** i **respostes**. Els administradors del fòrum poden crear temes, on, dins d'aquests, es crearan preguntes i respostes que podràn formular i respondre usuaris sense necessitat de ser administradors.
+Aquesta pràctica tracta del diseny i implementació d'un simple forum. El fòrum consta de **temes**, **preguntes** i **respostes**. L'administrador del fòrum pot crear temes assignant un responsable, dins d'aquests temes, tots els usuaris identificats (admin inclòs) podràn formular preguntes i respondre-les.
 
 [Aquí](http://soft0.upc.edu/~ldatusr14/practica3/forum.cgi) es troba el fòrum implementat.
 
@@ -13,14 +13,15 @@ Aquesta pràctica tracta del diseny i implementació d'un simple forum. El fòru
          * [Respostes](#respostes)
       * [Afegir noves preguntes a un determinat tema](#afegir-noves-preguntes-a-un-determinat-tema)
       * [Afegir noves respostes a una determinada pregunta](#afegir-noves-respostes-a-una-determinada-pregunta)
-   * [Modificacions de tema](#modificacions-de-tema)
+      * [Modificacions a un tema](#modificacions-a-un-tema)
+      * [Eliminar continguts](#eliminar-continguts)
 
 
 # Funcionalitats implementades
 
 ## Consultar la llista de temes oberts sobre els que es poden fer qüestions i respostes.
 
-Cada tema conté: un **títol**, un **_leader_** del tema i una **descripció** del tema. Amb el mètode `getHomeR` es llisten tots els temes oberts:
+Cada tema conté un **títol**, un **leader** i una **descripció** del tema. Amb el mètode `getHomeR` (proveït pel professor) es generen diverses variables: les que permeten identificar la db o l'usuari, la que utilitzarem per llistar tots els temes creats i  també la que generarà un forumlari.
 
 ```haskell
 getHomeR :: HandlerFor Forum Html
@@ -45,7 +46,9 @@ I que és **administrador** amb:
 ```haskell
 when (not (isAdmin user)) (permissionDenied "L'usuari no és l'administrador")
 ```
-Un cop es cumpleixen aquestes dos premises, dins del mètode `postHomeR` es crea un formulari per fer _post_ d'un tema:
+Amb això ens assegurem de que cap usuari que no sigui administrador pugui crear un tema. No n'hi ha prou amb la línia de codi de la plantilla html que fa que no aparegui el formulari en cas de no ser admin.
+
+Un cop es cumpleixen aquestes dues premises, dins del mètode `postHomeR` (proveït pel professor) s'executa un formulari per fer _post_ d'un tema:
 
 ```haskell
 postHomeR :: HandlerFor Forum Html
@@ -64,6 +67,7 @@ postHomeR = do
             let mbuser = Just user
             defaultLayout $(widgetTemplFile "src/forum/templates/home.html")
 ```
+És important també anar-nos fixant en tots els mètodes on redirigim, usant `redirectRoute`, a l'usuari quan fa submit dels formularis. 
 
 Aquest formulari té la següent estructura:
 
@@ -77,21 +81,20 @@ themeForm maybeth =
           <*> freq textField (withPlaceholder "Introduiu el títol del tema" "Titol del tema") (tTitle <$> maybeth)
           <*> freq textareaField (withPlaceholder "Introduiu la descripció del tema" "Descripció") (tDescription <$> maybeth)
 ```
+_Nota: Tal i com hem pensat la implementació per a modificar temes, s'ha hagut de variar una mica themeForm_
 
-Aquí es mostra el Front End del formulari que crea:
+Aquí es mostra una captura del Front End del formulari que es genera:
+![FormThemeScreenShot](/project-p3/img/formThemes.png)
 
-![FormThemeScreenShot](/Practica3/project-p3/img/formThemes.png)
+Els mètodes de `HomeR` així com les variables definides s'utilitzen per conformar la plantilla [home.html](project-p3/src/forum/templates/home.html) que és la pàgina principal del fòrum. Amb l'ajuda de `getThemeList`, hem posat a la variable _themes_  una llista de temes formats per parelles (tid, theme). D'aquest segon element de cada tema s'en extreu el contingut.
 
-
-[Aquí](http://soft0.upc.edu/~ldatusr14/practica3/forum.cgi/) online.  
-_Cal estar registrat com administrador per poder veure-ho._
-
+[Aquí](http://soft0.upc.edu/~ldatusr14/practica3/forum.cgi/) es pot veure el comportament de la pàgina online.  
 
 ## Veure les preguntes i respostes realitzades sobre un tema determinat. 
 Dins de cada tema, hi poden haver-hi vàries **preguntes**, i dins de cada pregunta, també poden haver-hi vàries **respostes**.
 
 ### Preguntes
-Es mostren a través del mètode `getThemeR`. Les preguntes tenen com a atributs:
+Cada pregunta té els següents atributs:
 
 ```haskell
 data Question = Question
@@ -103,34 +106,32 @@ data Question = Question
         }
         deriving (Show)
 ```
+Per llistar les preguntes d'un cert tema es segueix un procediment molt semblant al que hem utilitzat anteriorment.
+Amb el mètode `getThemeR` obtenim principalment l'usuari i la llista de preguntes amb utilitzant `getQuestionList` així com altres variables que necessitarem per a la plantilla. 
 
-* L'**usuari** que ha fet la pregunta s'obté amb:
-    ```haskell
-    mbuser <- maybeAuthId
-    ``` 
-    
-* La **data** en la que s'ha fet la pregunta, l'**assumpte**, i el **contingut** de la pregunta s'obtenen simplement fent un _get_ de la llista de respostes:
-    ```haskell
-    questions <- liftIO $ getQuestionList tid db
-    ```
-   
-    Finalment, la implementació del mètode que mostra les diferents preguntes i respostes:
-   
-    ```haskell
-    getThemeR :: ThemeId -> HandlerFor Forum Html
-    getThemeR tid = do
+```haskell
+getThemeR :: ThemeId -> HandlerFor Forum Html
+getThemeR tid = do
+    -- fail "A completar per l'estudiant"
     db <- getsSite forumDb
     mbuser <- maybeAuthId
+    -- let mbuser = Just user
+    -- mbuser <- requireAuthId
     Just theme <- liftIO $ getTheme tid db
     questions <- liftIO $ getQuestionList tid db
     qformw <- generateAFormPost (questionForm tid)
     defaultLayout $(widgetTemplFile "src/forum/templates/currentTheme.html")
-    ```
-[Aquí](http://soft0.upc.edu/~ldatusr14/practica3/forum.cgi/themes/1) un exemple del **FrontEnd**
-   
+```
+
+A la plantilla [currentTheme.html](project-p3/src/forum/templates/currentTheme.html) hi trobem bàsicament tres parts diferenciades. 
+Primerament l'encarregada de mostrar la informació del tema en questió així com modificar-lo si es dóna el cas.
+En segon lloc s'itera sobre la llista de preguntes mostrant-les totes, tal com hem fet amb els temes. Notar que entre els atributs de la pregunta hi ha qPosted, que ens diu quan s'ha fet la pregunta. El métode que ens dóna aquest temps `getCurrentTime`, retorna un IO UTCTime que posteriorment ha de ser convertit a Text amb `show`.
+Per últim mostrem el formulari per crear pregunta.
+
+[Aquí](http://soft0.upc.edu/~ldatusr14/practica3/forum.cgi/themes/1) un exemple d'un tema al fòrum.
    
 ### Respostes
-Es mostren a través del mètode `getQuestionR`. Les respostes consten dels següents atributs:
+Per mostrar les respostes d'un determinat tema es fa pràcticament igual que com hem vist fins ara. A cada resposta hi trobem els següents atributs:
 
 ```haskell
 data Answer = Answer
@@ -141,21 +142,12 @@ data Answer = Answer
         }
         deriving (Show)
 ```
-
-* L'**usuari** s'obté de la mateixa manera que amb les preguntes:
-    ```haskell
-    mbuser <- maybeAuthId
-    ```
-    
-* La **data** i el **contingut**, s'obtenen simplement de fer un _get_ de la llista de respostes amb:
-    ```haskell
-    answers <- liftIO $ getAnswerList qid db
-    ```
-A continuació es mostra la implementació del mètode `getQuestionR`:
+El mètode `getQuestionR` és el següent:
 
 ```haskell
 getQuestionR :: ThemeId -> QuestionId -> HandlerFor Forum Html
 getQuestionR tid qid = do
+      -- fail "A completar per l'estudiant"
       db <- getsSite forumDb
       mbuser <- maybeAuthId
       Just theme <- liftIO $ getTheme tid db
@@ -164,22 +156,18 @@ getQuestionR tid qid = do
       aformw <- generateAFormPost (answerForm tid)
       defaultLayout $(widgetTemplFile "src/forum/templates/currentQuestion.html")
 ```
-[Aquí](http://soft0.upc.edu/~ldatusr14/practica3/forum.cgi/themes/1/qs/1) un exemple del **Frontend**.
+
+A la plantilla [currentQuestion.html](project-p3/src/forum/templates/currentQuestion.html) hi trobem bàsicament tres parts diferenciades. 
+Primerament l'encarregada de mostrar la informació de la pregunta en questió així com eliminar-la si es dóna el cas. 
+En segon lloc s'itera sobre la llista de respostes mostrant-les totes. També aquí es dóna l'opció d'esborrar una resposta determinada.
+Per últim mostrem el formulari per crear respostes.
+
+[Aquí](http://soft0.upc.edu/~ldatusr14/practica3/forum.cgi/themes/1/qs/1) un exemple d'una pregunta determinada
 
 
 ## Afegir noves preguntes a un determinat tema
-Aquesta funcionalitat s'implementa en el mètode `postThemeR`.  
+Amb `getThemeR` i `postThemeR` generem i executem el formulari que servirà per afegir preguntes al tema. Aquest té el format següent:
 
-* El primer que s'ha de fer, seguint l'estructura ja vista, és comprovar que l'**usuari** s'ha autenticat:
-    ```haskell
-    user <- requireAuthId
-    ```
-    
-* Després cal cear el **formulari** de preguntes.
-    ```haskell
-    (qformr, qformw) <- runAFormPost (questionForm tid)
-    ```   
-    Aquest formulari té el format:
     ```haskell
     questionForm :: ThemeId -> AForm (HandlerFor Forum) Question
     questionForm tid =
@@ -189,8 +177,7 @@ Aquesta funcionalitat s'implementa en el mètode `postThemeR`.
            <*> freq textField (withPlaceholder "Introduïu el títol de la pregunta" "Assumpte") Nothing
            <*> freq textareaField (withPlaceholder "Introduïu la descripció de la pregunta" "Descripció") Nothing
     ```
-
-Aquí es mostra la impementació del mètode `postThemeR`
+El métode `postThemeR` és:
 
 ```haskell
 postThemeR :: ThemeId -> HandlerFor Forum Html
@@ -210,9 +197,7 @@ postThemeR tid = do
 ```
 
 ## Afegir noves respostes a una determinada pregunta
-Aquesta funcionalitat s'implementa en el mètode `postQuestionR`. Per poder respondre a una pregunta, l'usuari s'ha d'haver identificat. Seguidament es crea el formulari de resposta, tot això seguint la mateixa estructura que per el POST de les preguntes i de les respostes.
-
-El formulari de les respostes té la següent forma:
+De manera anàloga a l'anterior punt, generem i executem un formulari que té els següests atributs. La part del codi relacionada amb la eliminació de continguts s'explicarà més endavant: 
 
 ```haskell
 answerForm :: QuestionId -> AForm (HandlerFor Forum) Answer
@@ -223,7 +208,7 @@ answerForm qid =
           <*> freq textField (withPlaceholder "Introduïu la resposta" "Resposta") Nothing
 ```
 
-A continuació es mostra el mètode `postQuestionR`. Bàsicament, és anàlog als mètodes POST mostrats anteriorment. Hi han parts del codi que s'explicaran més endavant (esborrar preguntes i respostes).
+A continuació es mostra el mètode `postQuestionR`:
 
 ```haskell
 postQuestionR :: ThemeId -> QuestionId -> HandlerFor Forum Html
@@ -256,13 +241,52 @@ postQuestionR tid qid = do
             defaultLayout $(widgetTemplFile "src/forum/templates/currentQuestion.html")
 ```
 
-## Modificacions de tema
-Per les modificacions s'ha decidit crear dos mètodes nous: `getThemeEditR` i `postThemeEditR`.
-Si l'usuari s'ha autentificat i és el leader d'un determinat tema, aquest el pot modificar
+## Modificacions a un tema
+L'objectiu era que un usuari autentificat com a leader d'un tema pugi editar-ne el contingut. Per comoditat, hem pensat que el millor seria generar un formulari semblant al de crear tema a una nova plantilla html.
 
+Primerament s'ha creat una nova ruta anomenada `themeEditR` al fitxer [App.hs](project-p3/src/forum/haskell/App.hs) que conté els també nous métodes `getThemeEditR` i `postThemeEditR`. Aquests són molt semblants als de la creació de temes:
+```haskell
+getThemeEditR :: ThemeId -> HandlerFor Forum Html
+getThemeEditR tid = do
+    db <- getsSite forumDb
+    Just theme <- liftIO $ getTheme tid db
+    user <- requireAuthId
+    when (not (isLeader theme user)) (permissionDenied "L'usuari no és el moderador")
+    tformw <- generateAFormPost (themeForm (Just theme))
+    defaultLayout $ $(widgetTemplFile "src/forum/templates/updateTheme.html")
+```
+Aquí veiem que per comprovar que l'usuari autentificat sigui el leader del tema, s'utilitza la funció `isLeader` que hem hagut de implementar a [Found.hs](project-p3/src/forum/haskell/Found.hs). 
+Aquesta funció espera un tema i una id d'usuari. Si el leader del tema i aquesta id coincideixen retorna True. False en cas contrari:
 
- 
-   
+```haskell
+isLeader :: Theme -> UserId -> Bool
+isLeader t u = (u == tLeader t)
+```
+
+```haskell
+postThemeEditR :: ThemeId -> HandlerFor Forum Html
+postThemeEditR tid = do
+  user <- requireAuthId
+  db <- getsSite forumDb
+  Just theme <- liftIO $ getTheme tid db
+  (tformr, tformw) <- runAFormPost (themeForm (Just theme))
+  case tformr of
+      FormSuccess edittheme -> do
+          liftIO $ updateTheme tid edittheme db
+          redirectRoute (ThemeR tid) []
+      _ -> do
+          themes <- liftIO $ getThemeList db
+          let mbuser = Just user
+          defaultLayout $(widgetTemplFile "src/forum/templates/updateTheme.html")
+```
+
+En aquest métode veiem que s'utilitza la funció updateTheme que modifica una entrada a la base de dades. Un problema que vàrem tenir és que el formulari que generàvem, com és lògic, estava buit. El que necessitavem eren els valors dels atributs que hi havien en el tema a modificar. És per això que vàrem haver de modificar lleugerament themeForm. 
+
+Sols ha calgut que el primer atribut de la funció sigui de tipus Maybe Theme en comptes de sols Theme. I hem fet que els valors per defecte fossin `tLeader` `tTitle` i `tDescription` mapejats al context Maybe del tema. D'aquesta manera, quan a `getThemeEditR` i `postThemeEditR` invoquem ```haskell themeForm (Just theme) ``` els camps del formulari de tema s'omplen amb els valors que hi havia a `theme`. En canvi quan ho hem usat per crear un nou formulari hem fet ```haskell themeForm (Just Nothing)``` perquè els camps estiguessin buits.
+
+Un cop implementat això, sols ha calgut crear un enllaç a _currentTheme.html_ "protegit" amb isLeader que ens porti a la plantilla [updateTheme.html](project-p3/src/forum/templates/updateTheme.html). Aquesta sols conté el form per modificar el tema.
+
+  
 
 
    
