@@ -73,7 +73,9 @@ instance Monad Handler where
     --          (>>=) :: Handler a -> (a -> Handler b) -> Handler b
     return = pure
     HandlerC hx >>= f =
-        error "Handler.(>>=): A completar per l'estudiant"
+      HandlerC $ \ req st -> do
+         (res1, st1) <- hx req st
+         runHandler (f res1) req st1
 
 -- ****************************************************************
 
