@@ -3,11 +3,6 @@ Repositori on es troben totes les pràctiques del curs resoltes. Dins de cada ca
 
 ## Índex
 
-* [PRÀCTICA 1 - Introducció](#pràctica-1---introducció)
-* [Primera part](#primera-part)
-* [Segona part](#segona-part)
-   * [Pregunta 1](#pregunta-1)
-   * [Pregunta 2](#pregunta-2)
-* [Tercera part](#tercera-part)
-   * [Pregunta 1](#pregunta-1-1)
-   * [Pregunta 2](#pregunta-2-1)
+* [Pràctica 1 - Introducció](/Practica1/README.md)
+* [Practica 2 - Introducció al Haskell](/Practica2/README.md)
+* [Pràctica 3 - Creació d'un fòrum](/Practica3/README.md)
